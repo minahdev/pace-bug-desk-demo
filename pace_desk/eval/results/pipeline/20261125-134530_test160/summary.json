@@ -1,0 +1,28 @@
+{
+  "split": "test",
+  "metrics": {
+    "n": 160,
+    "errors": 0,
+    "cls_acc": 0.96875,
+    "recall_by_category": {
+      "버그": 0.9625,
+      "문의": 0.9354838709677419,
+      "개선 요청": 1.0,
+      "판단 불가": 1.0
+    },
+    "platform_acc": 1.0,
+    "version_acc": 1.0,
+    "env_acc": 0.99375,
+    "steps_presence_acc": 0.95625,
+    "invented_rate": 0.0,
+    "link_acc": 0.9705882352941176,
+    "severity_acc": 0.987012987012987,
+    "priority_acc": 0.9779411764705882,
+    "priority_within1": 1.0,
+    "completeness_acc": 0.925,
+    "time_p50_sec": 0.0,
+    "time_p95_sec": 0.0,
+    "cost_per_report_usd": 0.0013093937499999999,
+    "elapsed_sec": 8.7
+  }
+}

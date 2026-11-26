@@ -1,0 +1,28 @@
+{
+  "split": "dev",
+  "metrics": {
+    "n": 12,
+    "errors": 0,
+    "cls_acc": 1.0,
+    "recall_by_category": {
+      "버그": 1.0,
+      "문의": 1.0,
+      "개선 요청": 1.0,
+      "판단 불가": 1.0
+    },
+    "platform_acc": 1.0,
+    "version_acc": 1.0,
+    "env_acc": 1.0,
+    "steps_presence_acc": 1.0,
+    "invented_rate": 0.0,
+    "link_acc": 1.0,
+    "severity_acc": 1.0,
+    "priority_acc": 1.0,
+    "priority_within1": 1.0,
+    "completeness_acc": 1.0,
+    "time_p50_sec": 0.0,
+    "time_p95_sec": 0.0,
+    "cost_per_report_usd": 0.0013629166666666668,
+    "elapsed_sec": 0.0
+  }
+}

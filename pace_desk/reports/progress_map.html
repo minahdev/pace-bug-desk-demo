@@ -1,0 +1,754 @@
+<title>PACE 제보 데스크 진행 지도</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* 레이아웃: 위에서 아래로 읽는 안내서 한 줄. 맨 위 '코스 지도'(구간 0~9)로 진행 상황을 먼저 보여 주고, 그 아래에 예시 → 계산법 → 구간별 기록 → 참고 자료 순서로 쌓는다 */
+:root {
+  --bg: #f2f5f3;
+  --surface: #fcfcfb;
+  --ink: #14201a;
+  --ink-2: #46524b;
+  --muted: #66716a;
+  --line: #d6ddd8;
+  --accent: #16774a;
+  --accent-ink: #ffffff;
+  --accent-soft: #dfefe6;
+  --next: #9c5304;
+  --next-soft: #faead5;
+  --later: #8b958f;
+  --quote: #e9efeb;
+  --bar: #2a78d6;
+  --track: #e4e9e6;
+  --p-urgent: #104281;
+  --p-high: #256abf;
+  --p-normal: #5598e7;
+  --p-low: #86b6ef;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111513;
+    --surface: #1a1a19;
+    --ink: #e9efeb;
+    --ink-2: #b5bfb8;
+    --muted: #919b94;
+    --line: #2d3430;
+    --accent: #4fc08b;
+    --accent-ink: #0c1a12;
+    --accent-soft: #17301f;
+    --next: #f0a44c;
+    --next-soft: #392912;
+    --later: #6f7973;
+    --quote: #212723;
+    --bar: #3987e5;
+    --track: #2a302c;
+    --p-urgent: #b7d3f6;
+    --p-high: #6da7ec;
+    --p-normal: #2a78d6;
+    --p-low: #184f95;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111513;
+  --surface: #1a1a19;
+  --ink: #e9efeb;
+  --ink-2: #b5bfb8;
+  --muted: #919b94;
+  --line: #2d3430;
+  --accent: #4fc08b;
+  --accent-ink: #0c1a12;
+  --accent-soft: #17301f;
+  --next: #f0a44c;
+  --next-soft: #392912;
+  --later: #6f7973;
+  --quote: #212723;
+  --bar: #3987e5;
+  --track: #2a302c;
+  --p-urgent: #b7d3f6;
+  --p-high: #6da7ec;
+  --p-normal: #2a78d6;
+  --p-low: #184f95;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 72px;
+  display: grid;
+  gap: 64px;
+}
+h1, h2, h3, h4 { text-wrap: balance; line-height: 1.3; margin: 0; }
+h1 { font-size: clamp(30px, 6vw, 44px); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 19px; font-weight: 700; }
+h4 { font-size: 16px; font-weight: 600; }
+p { margin: 0; }
+code, .mono { font-family: var(--font-mono); font-size: 0.88em; }
+code { background: var(--quote); padding: 1px 6px; border-radius: 4px; }
+b, strong { font-weight: 600; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--bar); outline-offset: 2px; border-radius: 4px; }
+
+section { display: grid; gap: 20px; min-width: 0; }
+.section-lede { color: var(--ink-2); max-width: 65ch; }
+.eyebrow {
+  font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: var(--accent);
+}
+
+/* 머리말 */
+.intro { display: grid; gap: 16px; }
+.lede { font-size: 18px; color: var(--ink-2); max-width: 62ch; }
+.chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font-size: 14px; font-weight: 600; padding: 4px 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
+}
+.chip.done { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+.chip.next { background: var(--next-soft); border-color: transparent; color: var(--next); }
+
+/* 코스 지도 */
+.course { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); }
+.stop { position: relative; display: grid; justify-items: center; align-content: start; gap: 4px; text-align: center; padding-inline: 2px; }
+.stop:not(:last-child)::after {
+  content: ""; position: absolute; top: 18px; left: calc(50% + 21px); width: calc(100% - 42px); height: 4px;
+  border-radius: 2px; background: var(--line);
+}
+.stop.done:not(:last-child)::after { background: var(--accent); }
+.dot {
+  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  font-family: var(--font-mono); font-weight: 500; font-size: 15px;
+  background: var(--surface); border: 2px solid var(--later); color: var(--muted);
+}
+.done .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.next .dot { border: 3px solid var(--next); background: var(--next-soft); color: var(--next); }
+.stop-name { font-size: 13.5px; font-weight: 600; line-height: 1.35; margin-top: 4px; }
+.stop-state { font-size: 12px; color: var(--muted); }
+.done .stop-state { color: var(--accent); }
+.next .stop-state { color: var(--next); font-weight: 700; }
+@media (max-width: 720px) {
+  .course { grid-template-columns: 1fr; }
+  .stop { grid-template-columns: 40px 1fr auto; justify-items: start; align-items: center; text-align: left; column-gap: 12px; padding-block: 6px; }
+  .stop:not(:last-child)::after { top: 46px; left: 18px; width: 4px; height: calc(100% - 40px); }
+  .stop-name { margin-top: 0; font-size: 15px; }
+  .stop-state { font-size: 13px; }
+}
+
+/* 예시 흐름 */
+.report {
+  margin: 0; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line);
+  border-left: 4px solid var(--ink-2); border-radius: 0 8px 8px 0; font-size: 17px;
+}
+.report-meta { display: block; font-size: 13px; color: var(--muted); margin-top: 8px; font-family: var(--font-mono); }
+.flow { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.flow > li { display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 16px; position: relative; padding-bottom: 22px; }
+.flow > li:not(:last-child)::before {
+  content: ""; position: absolute; left: 18px; top: 40px; bottom: 0; width: 4px; border-radius: 2px; background: var(--line);
+}
+.flow-no {
+  width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: var(--bg);
+  display: grid; place-items: center; font-family: var(--font-mono); font-weight: 500;
+}
+.flow-body { display: grid; gap: 8px; min-width: 0; padding-top: 6px; }
+.flow-body .why { color: var(--ink-2); }
+.answer { display: inline-block; font-weight: 700; font-size: 17px; padding: 2px 12px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); }
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 16px; margin: 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; }
+.kv .note { color: var(--muted); font-size: 14px; }
+.issue { font-family: var(--font-mono); font-weight: 500; }
+.equation { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 16px; }
+.term { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; }
+.term b { font-family: var(--font-mono); }
+.result-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px;
+  display: grid; gap: 10px; max-width: 520px;
+}
+.result-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.result-row .label { color: var(--muted); font-size: 14px; min-width: 7em; }
+.pri { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+.pri::before { content: ""; width: 12px; height: 12px; border-radius: 3px; background: var(--sw); }
+
+/* 계산법 */
+.parts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.part { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 10px; align-content: start; }
+.part-head { display: grid; gap: 2px; }
+.part-sub { font-size: 14px; color: var(--muted); }
+.levels { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.levels li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 8px; font-size: 14.5px; line-height: 1.5; }
+.levels .pt { font-family: var(--font-mono); font-weight: 500; text-align: center; background: var(--quote); border-radius: 4px; height: fit-content; }
+.who { font-size: 13px; color: var(--ink-2); border-top: 1px dashed var(--line); padding-top: 8px; }
+.scale { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
+.scale span { text-align: center; padding: 8px 0 6px; font-family: var(--font-mono); font-weight: 500; background: var(--sw); color: var(--sw-ink); }
+.scale span:first-child { border-radius: 6px 0 0 6px; }
+.scale span:last-child { border-radius: 0 6px 6px 0; }
+.scale-labels { display: grid; grid-template-columns: 2fr 2fr 1fr 2fr; gap: 2px; text-align: center; font-weight: 600; font-size: 14px; }
+.sw-urgent { --sw: var(--p-urgent); --sw-ink: var(--surface); }
+.sw-high { --sw: var(--p-high); --sw-ink: var(--surface); }
+.sw-normal { --sw: var(--p-normal); --sw-ink: var(--ink); }
+.sw-low { --sw: var(--p-low); --sw-ink: var(--ink); }
+@media (max-width: 720px) { .parts { grid-template-columns: 1fr; } }
+
+/* 구간 기록 */
+.legs { display: grid; gap: 28px; }
+.leg { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: grid; gap: 18px; min-width: 0; }
+.leg-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+.leg-no { font-family: var(--font-mono); font-size: 14px; color: var(--accent); font-weight: 500; }
+.leg-state { font-size: 13px; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: 2px 10px; border-radius: 999px; }
+.analogy { background: var(--quote); border-radius: 8px; padding: 12px 16px; color: var(--ink-2); }
+.analogy b { color: var(--ink); }
+.leg ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.tile { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px; align-content: start; }
+.tile .big { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.tile .small { font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+.file { font-size: 14px; color: var(--muted); }
+.file code { color: var(--ink-2); }
+.sub { display: grid; gap: 12px; }
+.sub-title { font-size: 17px; font-weight: 700; }
+
+.table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; }
+td.num, th.num { text-align: right; }
+tbody tr:last-child td { border-bottom: 0; }
+
+.examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.example { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; }
+.example .quote { font-size: 15.5px; }
+.example .verdict { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 14px; color: var(--ink-2); }
+.cat { font-weight: 700; font-size: 13.5px; padding: 1px 10px; border-radius: 999px; background: var(--ink); color: var(--bg); }
+@media (max-width: 720px) { .examples { grid-template-columns: 1fr; } }
+
+/* 차트 */
+.chart { display: grid; gap: 10px; }
+.chart-title { font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.bar-row { display: grid; grid-template-columns: 6.5em minmax(0, 1fr) 3.2em; gap: 10px; align-items: center; }
+.bar-label { font-size: 14.5px; }
+.bar-track { height: 16px; background: var(--track); border-radius: 4px; overflow: hidden; }
+.bar-fill { display: block; height: 100%; background: var(--bar); border-radius: 0 4px 4px 0; }
+.bar-value { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.stack-row { display: grid; grid-template-columns: 6.5em minmax(0, 1fr); gap: 10px; align-items: center; }
+.stack { display: flex; gap: 2px; height: 26px; }
+.seg { display: block; height: 100%; background: var(--sw); min-width: 3px; }
+.seg:first-child { border-radius: 4px 0 0 4px; }
+.seg:last-child { border-radius: 0 4px 4px 0; }
+.legend-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: var(--sw); margin-right: 6px; vertical-align: -1px; }
+
+/* 이중 채점 */
+.steps3 { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; counter-reset: s; }
+.steps3 li { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 15px; display: grid; gap: 4px; align-content: start; }
+.steps3 .k { font-family: var(--font-mono); font-size: 13px; color: var(--accent); }
+@media (max-width: 720px) { .steps3 { grid-template-columns: 1fr; } }
+
+/* 비교표 */
+.compare th:first-child { width: 22%; }
+.yes { color: var(--accent); font-weight: 600; }
+
+/* 상태 표시 */
+.tag { display: inline-block; font-size: 12.5px; font-weight: 700; padding: 1px 9px; border-radius: 999px; white-space: nowrap; }
+.tag.done { background: var(--accent-soft); color: var(--accent); }
+.tag.ready { background: var(--next-soft); color: var(--next); }
+.ahead a { color: var(--accent); }
+.tag.later { background: var(--quote); color: var(--muted); }
+
+/* 남은 구간 */
+.ahead { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ahead li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.ahead li.is-next { border: 2px solid var(--next); }
+.ahead .dot { width: 36px; height: 36px; font-size: 14px; }
+.ahead .is-next .dot { border: 3px solid var(--next); background: var(--next-soft); color: var(--next); }
+.ahead h3 { font-size: 17px; }
+.ahead p { color: var(--ink-2); font-size: 15px; }
+
+/* 용어 사전 */
+.glossary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
+.glossary div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.glossary dt { font-weight: 700; }
+.glossary dd { margin: 2px 0 0; color: var(--ink-2); font-size: 15px; }
+@media (max-width: 720px) { .glossary { grid-template-columns: 1fr; } }
+
+footer { color: var(--muted); font-size: 13.5px; display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 20px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+
+<header class="intro">
+  <p class="eyebrow">LLM 서비스 과제 · 개발팀 업무</p>
+  <h1>PACE 버그 제보 데스크</h1>
+  <p class="lede">사용자가 보낸 버그 제보를 읽고, 종류를 나누고, 필요한 정보를 뽑고, 이미 알려진 이슈와 연결해서 얼마나 급한지 알려 주는 서비스예요. 이 페이지는 지금까지 한 일을 처음 보는 사람도 알 수 있게 정리한 거예요.</p>
+  <ul class="chips">
+    <li class="chip done">구간 0~9 모두 완료</li>
+    <li class="chip done">최종 평가 통과</li>
+    <li class="chip">2026-11-25 기준</li>
+  </ul>
+</header>
+
+<section aria-labelledby="map-title">
+  <h2 id="map-title">진행 지도</h2>
+  <p class="section-lede">PACE는 달리기 앱이라서 일정도 달리기 코스처럼 10개 구간으로 나눴어요. 모든 구간을 완주했어요.</p>
+  <ol class="course">
+    <li class="stop done"><span class="dot" aria-hidden="true">✓</span><span class="stop-name">0 설계</span><span class="stop-state">완료</span></li>
+    <li class="stop done"><span class="dot" aria-hidden="true">✓</span><span class="stop-name">1 기록부</span><span class="stop-state">완료</span></li>
+    <li class="stop done"><span class="dot" aria-hidden="true">✓</span><span class="stop-name">2 시험지</span><span class="stop-state">완료</span></li>
+    <li class="stop done"><span class="dot" aria-hidden="true">✓</span><span class="stop-name">3 llm.py</span><span class="stop-state">완료</span></li>
+    <li class="stop done"><span class="dot" aria-hidden="true">✓</span><span class="stop-name">4 분류 실험</span><span class="stop-state">완료</span></li>
+    <li class="stop done"><span class="dot" aria-hidden="true">✓</span><span class="stop-name">5 추출 실험</span><span class="stop-state">완료</span></li>
+    <li class="stop done"><span class="dot" aria-hidden="true">✓</span><span class="stop-name">6 도구</span><span class="stop-state">완료</span></li>
+    <li class="stop done"><span class="dot" aria-hidden="true">✓</span><span class="stop-name">7 연결·점수</span><span class="stop-state">완료</span></li>
+    <li class="stop done"><span class="dot" aria-hidden="true">✓</span><span class="stop-name">8 웹 서비스</span><span class="stop-state">완료</span></li>
+    <li class="stop done"><span class="dot" aria-hidden="true">✓</span><span class="stop-name">9 최종 평가</span><span class="stop-state">완주</span></li>
+  </ol>
+</section>
+
+<section aria-labelledby="flow-title">
+  <h2 id="flow-title">제보 하나가 지나가는 길</h2>
+  <p class="section-lede">시험 문제 pe-097(연습용)을 예로 들어, 완성된 서비스가 글 하나를 어떻게 처리하는지 따라가 볼게요.</p>
+  <blockquote class="report">"1.2.0 쓰는데 걸음수가 삼성헬스보다 하루에 천보씩은 적게 나와요. 남편 폰도 그렇대요. 둘 다 갤럭시 S23이에요"<span class="report-meta">사용자 제보 · pe-097</span></blockquote>
+  <ol class="flow">
+    <li>
+      <span class="flow-no" aria-hidden="true">1</span>
+      <div class="flow-body">
+        <h3>분류: 어떤 종류의 글인가</h3>
+        <p><span class="answer">버그</span></p>
+        <p class="why">실제로 겪은 문제를 알리고 있어요. 문의(사용법 질문)나 개선 요청(새 기능 부탁)이 아니에요.</p>
+      </div>
+    </li>
+    <li>
+      <span class="flow-no" aria-hidden="true">2</span>
+      <div class="flow-body">
+        <h3>추출: 글에서 정보 뽑기</h3>
+        <dl class="kv">
+          <dt>플랫폼</dt><dd>Android 앱 <span class="note">갤럭시 S23은 안드로이드 폰이에요</span></dd>
+          <dt>기기</dt><dd>갤럭시 S23</dd>
+          <dt>앱 버전</dt><dd>1.2.0</dd>
+          <dt>재현 절차</dt><dd>없음 <span class="note">언제, 어느 화면에서 봤는지 안 적혀 있어요</span></dd>
+          <dt>다른 사람도</dt><dd>겪음 <span class="note">"남편 폰도 그렇대요"</span></dd>
+        </dl>
+      </div>
+    </li>
+    <li>
+      <span class="flow-no" aria-hidden="true">3</span>
+      <div class="flow-body">
+        <h3>기록부에서 같은 문제 찾기</h3>
+        <p><span class="issue">PACE-107</span> "걸음 수가 삼성헬스와 다르고 걸어도 바로 안 올라감"을 찾았어요. 이 문제는 <b>앱 1.0.2에서 고쳤어요.</b></p>
+        <p class="why">그런데 이 사용자는 더 새 버전인 1.2.0을 쓰는데도 겪고 있어요. 그러니 <b>고친 문제가 다시 생긴 것(재발)</b>이에요.</p>
+      </div>
+    </li>
+    <li>
+      <span class="flow-no" aria-hidden="true">4</span>
+      <div class="flow-body">
+        <h3>점수 매기기</h3>
+        <div class="equation">
+          <span class="term">심각도 <b>1</b></span><span aria-hidden="true">+</span>
+          <span class="term">영향 범위 <b>2</b></span><span aria-hidden="true">+</span>
+          <span class="term">해결 상태 <b>2</b></span><span aria-hidden="true">=</span>
+          <span class="term"><b>5</b></span><span aria-hidden="true">→</span>
+          <span class="pri sw-urgent">긴급</span>
+        </div>
+        <p class="why">숫자가 틀리는 문제라 심각도는 1이에요. 이미 23명이 제보해서 이 글까지 24명이니 영향 범위는 2예요. 고쳤는데 또 생겼으니 해결 상태는 2예요. 계산법은 바로 아래에 있어요.</p>
+      </div>
+    </li>
+    <li>
+      <span class="flow-no" aria-hidden="true">5</span>
+      <div class="flow-body">
+        <h3>화면에 보여 주기</h3>
+        <div class="result-card">
+          <div class="result-row"><span class="label">우선순위</span><span class="pri sw-urgent">긴급 (5점)</span></div>
+          <div class="result-row"><span class="label">연결된 이슈</span><span><span class="issue">PACE-107</span> · 1.0.2에서 고쳤는데 다시 생김</span></div>
+          <div class="result-row"><span class="label">더 물어볼 것</span><span>언제, 어느 화면에서 숫자를 비교했는지</span></div>
+        </div>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section aria-labelledby="score-title">
+  <h2 id="score-title">우선순위는 덧셈으로 정해요</h2>
+  <p class="section-lede">AI가 "긴급"을 바로 고르게 하지 않았어요. 점수 세 개를 매기고 코드가 더해요. 그래서 왜 긴급인지 항상 설명할 수 있어요.</p>
+  <div class="parts">
+    <div class="part">
+      <div class="part-head"><h3>심각도</h3><span class="part-sub">얼마나 심한 문제인가</span></div>
+      <ul class="levels">
+        <li><span class="pt">0</span><span>보기에만 거슬림 (글자, 색, 미리보기)</span></li>
+        <li><span class="pt">1</span><span>기능 일부가 틀림 (숫자가 다름, 가끔 실패)</span></li>
+        <li><span class="pt">2</span><span>보안 문제, 기록이 사라짐, 아예 못 씀</span></li>
+      </ul>
+      <p class="who">AI가 글을 읽고 매겨요.</p>
+    </div>
+    <div class="part">
+      <div class="part-head"><h3>영향 범위</h3><span class="part-sub">몇 명이 겪고 있나</span></div>
+      <ul class="levels">
+        <li><span class="pt">0</span><span>1~2명</span></li>
+        <li><span class="pt">1</span><span>3~9명 ("다른 사람도"라고 하면 최소 3명)</span></li>
+        <li><span class="pt">2</span><span>10명 이상</span></li>
+      </ul>
+      <p class="who">기록부의 제보 수에 이 글 1명을 더해서 코드가 계산해요.</p>
+    </div>
+    <div class="part">
+      <div class="part-head"><h3>해결 상태</h3><span class="part-sub">이미 아는 문제인가</span></div>
+      <ul class="levels">
+        <li><span class="pt">0</span><span>고친 버전이 있음 (업데이트 안내), 원래 그렇게 만든 것</span></li>
+        <li><span class="pt">1</span><span>알고 있고 고치는 중</span></li>
+        <li><span class="pt">2</span><span>처음 보는 문제, 고쳤는데 또 생김</span></li>
+      </ul>
+      <p class="who">AI가 찾은 이슈와 버전으로 코드가 계산해요.</p>
+    </div>
+  </div>
+  <div class="chart" role="img" aria-label="합계 0~1점은 낮음, 2~3점은 보통, 4점은 높음, 5~6점은 긴급">
+    <div class="scale">
+      <span class="sw-low">0</span><span class="sw-low">1</span><span class="sw-normal">2</span><span class="sw-normal">3</span><span class="sw-high">4</span><span class="sw-urgent">5</span><span class="sw-urgent">6</span>
+    </div>
+    <div class="scale-labels"><span>낮음</span><span>보통</span><span>높음</span><span>긴급</span></div>
+  </div>
+</section>
+
+<section aria-labelledby="legs-title">
+  <h2 id="legs-title">구간별 기록</h2>
+  <div class="legs">
+
+    <article class="leg" aria-labelledby="leg0">
+      <div class="leg-head"><span class="leg-no">구간 0</span><h3 id="leg0">설계</h3><span class="leg-state">완료</span></div>
+      <p class="analogy"><b>비유:</b> 집을 짓기 전에 설계도를 그리는 단계예요.</p>
+      <p>주제는 게임 운영, 경기도 BMS 데이터를 거쳐 <b>"개발팀 업무 + 내 앱 PACE"</b>로 정했어요. 과제 카드에 적힌 할 일은 세 가지예요.</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>할 일</th><th>내용</th></tr></thead>
+          <tbody>
+            <tr><td><b>분류</b></td><td>버그 / 문의 / 개선 요청 / 판단 불가. 판단 불가는 "정보가 부족하면 답하지 않기" 조건 때문에 더했어요.</td></tr>
+            <tr><td><b>추출</b></td><td>플랫폼(앱·웹), 기기, 앱 버전, 재현 절차</td></tr>
+            <tr><td><b>점수</b></td><td>정보 완성도(필요한 정보가 다 있나), 우선순위(얼마나 급한가)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sub">
+        <h4 class="sub-title">추가로 받은 조건 4개</h4>
+        <ul class="plain">
+          <li>태스크마다 평가셋 300건 이상</li>
+          <li>시험 문제를 어렵게 만들고, 태스크마다 정확도 높이기</li>
+          <li>실무에서 쓸 수 있는 수준</li>
+          <li>배운 기법을 전부 실험하고 결과 비교하기</li>
+        </ul>
+      </div>
+      <div class="sub">
+        <h4 class="sub-title">목표 점수 (합격선)</h4>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>무엇을 재나</th><th class="num">목표</th></tr></thead>
+            <tbody>
+              <tr><td>종류를 맞게 나눈 비율 (분류 정확도)</td><td class="num">95% 이상</td></tr>
+              <tr><td>판단 불가 글을 알아본 비율</td><td class="num">90% 이상</td></tr>
+              <tr><td>플랫폼·앱 버전을 맞게 뽑은 비율</td><td class="num">95% 이상</td></tr>
+              <tr><td>글에 없는 값을 지어낸 비율</td><td class="num">1% 이하</td></tr>
+              <tr><td>같은 이슈를 맞게 찾은 비율</td><td class="num">90% 이상</td></tr>
+              <tr><td>처음 보는 문제를 알아본 비율</td><td class="num">85% 이상</td></tr>
+              <tr><td>우선순위가 정답과 같은 비율</td><td class="num">85% 이상</td></tr>
+              <tr><td>우선순위가 한 칸 안으로 맞은 비율</td><td class="num">98% 이상</td></tr>
+              <tr><td>답의 모양이 틀린 비율 (형식 오류)</td><td class="num">0%</td></tr>
+              <tr><td>3번 물어도 같은 답이 나온 비율</td><td class="num">95% 이상</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="file">걸린 시간과 비용도 함께 기록해요.</p>
+      </div>
+    </article>
+
+    <article class="leg" aria-labelledby="leg1">
+      <div class="leg-head"><span class="leg-no">구간 1</span><h3 id="leg1">기록부</h3><span class="leg-state">완료</span></div>
+      <p class="analogy"><b>비유:</b> 회사의 "고장 접수 장부"예요. 새 제보가 오면 서비스가 이 장부에서 같은 문제를 찾아요.</p>
+      <div class="tiles">
+        <div class="tile"><span class="big">37</span><span class="small">알려진 이슈<br>버그 29 · 개선 요청 8</span></div>
+        <div class="tile"><span class="big">14</span><span class="small">버전 기록<br>앱 6 · 웹 3 · 서버 5</span></div>
+        <div class="tile"><span class="big mono">1.2.0</span><span class="small">최신 앱 버전<br>(2026-11-18)</span></div>
+        <div class="tile"><span class="big">16</span><span class="small">PACE 개발 일지에서 가져온 이슈<br>나머지 21개는 가상</span></div>
+      </div>
+      <p>버그 29개의 상태는 해결됨 11, 확인 중 8, 수정 중 5, 제한 사항 5예요. <b>제한 사항</b>은 고장이 아니라 원래 그렇게 만든 것이에요. 예를 들어 사진은 10MB까지만 올라가요.</p>
+      <div class="sub">
+        <h4 class="sub-title">일부러 넣은 "헷갈리는 짝"</h4>
+        <p>겉보기엔 같지만 사실은 다른 문제예요. 서비스가 이걸 잘 구별하는지 시험하려고 넣었어요.</p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>주제</th><th>비슷하지만 다른 이슈들</th></tr></thead>
+            <tbody>
+              <tr><td>로그아웃</td><td>웹에서 안 됨 <span class="issue">PACE-101</span> (고침) · 앱에서 안 됨 <span class="issue">PACE-117</span> (아직)</td></tr>
+              <tr><td>걸음 수</td><td>숫자가 다름 <span class="issue">107</span> · 1.2.0 뒤 자정에 초기화 안 됨 <span class="issue">124</span> · 권한이 없어 비어 있음 <span class="issue">120</span></td></tr>
+              <tr><td>커뮤니티 사진</td><td>서버 배포 뒤 사라짐 <span class="issue">103</span> · 엑스 박스 <span class="issue">110</span> · 용량 초과 <span class="issue">109</span> · 순서가 섞임 <span class="issue">113</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="file">파일: <code>pace_desk/data/pace_db.json</code> · 검사 13개 모두 통과</p>
+    </article>
+
+    <article class="leg" aria-labelledby="leg2">
+      <div class="leg-head"><span class="leg-no">구간 2</span><h3 id="leg2">시험지 (평가셋)</h3><span class="leg-state">완료</span></div>
+      <p class="analogy"><b>비유:</b> AI의 실력을 재는 시험 문제와 정답지예요. 정답이 있어야 채점을 할 수 있어요.</p>
+
+      <div class="sub">
+        <h4 class="sub-title">문제는 이렇게 생겼어요</h4>
+        <p>쉽게 맞히지 못하도록 함정을 넣었어요. 아래는 모두 실제 시험 문제(연습용)예요.</p>
+        <div class="examples">
+          <div class="example">
+            <p class="quote">"커뮤니티 사진이 왜 엑스 표시로 나오죠?? 전부는 아니고 몇 장만요"</p>
+            <p class="verdict"><span class="cat">버그</span><span>질문 모양이지만 실제로 겪은 문제예요</span></p>
+          </div>
+          <div class="example">
+            <p class="quote">"혹시 걸음수 위젯 있나요? 찾아봐도 안 보여서요"</p>
+            <p class="verdict"><span class="cat">문의</span><span>있는지 몰라서 묻는 거예요</span></p>
+          </div>
+          <div class="example">
+            <p class="quote">"질문 있어요~ 아이폰용 앱도 만들어 주실 수 있나요? 이번에 아이폰으로 바꿨거든요ㅎㅎ"</p>
+            <p class="verdict"><span class="cat">개선 요청</span><span>"질문"이라고 했지만 없는 앱을 만들어 달라는 부탁이에요</span></p>
+          </div>
+          <div class="example">
+            <p class="quote">"그거 언제 고쳐주시나요? 기다리다 지침"</p>
+            <p class="verdict"><span class="cat">판단 불가</span><span>"그거"가 무엇인지 글만으로는 알 수 없어요</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <h4 class="sub-title">400문제의 모습</h4>
+        <div class="chart">
+          <p class="chart-title">종류별 문제 수</p>
+          <div role="img" aria-label="버그 200, 문의 77, 개선 요청 63, 판단 불가 60">
+            <div class="bar-row"><span class="bar-label">버그</span><span class="bar-track"><span class="bar-fill" style="width:100%" title="버그 200문제"></span></span><span class="bar-value">200</span></div>
+            <div class="bar-row"><span class="bar-label">문의</span><span class="bar-track"><span class="bar-fill" style="width:38.5%" title="문의 77문제"></span></span><span class="bar-value">77</span></div>
+            <div class="bar-row"><span class="bar-label">개선 요청</span><span class="bar-track"><span class="bar-fill" style="width:31.5%" title="개선 요청 63문제"></span></span><span class="bar-value">63</span></div>
+            <div class="bar-row"><span class="bar-label">판단 불가</span><span class="bar-track"><span class="bar-fill" style="width:30%" title="판단 불가 60문제"></span></span><span class="bar-value">60</span></div>
+          </div>
+          <p class="chart-note">난이도는 어려움 209 · 보통 133 · 쉬움 58이에요. 절반 넘게 어려운 문제예요.</p>
+        </div>
+      </div>
+
+      <div class="sub">
+        <h4 class="sub-title">우선순위 골고루 맞추기</h4>
+        <p>처음 만든 300문제는 80%가 "보통"이었어요. 덧셈 시험에 덧셈 문제만 있으면 곱셈 실력은 알 수 없죠. 그래서 "긴급·높음·낮음" 위주로 100문제를 더 만들었어요.</p>
+        <div class="chart">
+          <div class="stack-row">
+            <span class="bar-label">처음 300</span>
+            <div class="stack" role="img" aria-label="처음 300문제: 긴급 14, 높음 24, 보통 203, 낮음 14 (점수 매기는 255문제)">
+              <span class="seg sw-urgent" style="flex:14" title="긴급 14 (5%)"></span>
+              <span class="seg sw-high" style="flex:24" title="높음 24 (9%)"></span>
+              <span class="seg sw-normal" style="flex:203" title="보통 203 (80%)"></span>
+              <span class="seg sw-low" style="flex:14" title="낮음 14 (5%)"></span>
+            </div>
+          </div>
+          <div class="stack-row">
+            <span class="bar-label">지금 400</span>
+            <div class="stack" role="img" aria-label="지금 400문제: 긴급 39, 높음 46, 보통 222, 낮음 33 (점수 매기는 340문제)">
+              <span class="seg sw-urgent" style="flex:39" title="긴급 39 (11%)"></span>
+              <span class="seg sw-high" style="flex:46" title="높음 46 (14%)"></span>
+              <span class="seg sw-normal" style="flex:222" title="보통 222 (65%)"></span>
+              <span class="seg sw-low" style="flex:33" title="낮음 33 (10%)"></span>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr><th></th><th class="num"><span class="legend-swatch sw-urgent"></span>긴급</th><th class="num"><span class="legend-swatch sw-high"></span>높음</th><th class="num"><span class="legend-swatch sw-normal"></span>보통</th><th class="num"><span class="legend-swatch sw-low"></span>낮음</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>처음 300문제</td><td class="num">14</td><td class="num">24</td><td class="num">203</td><td class="num">14</td></tr>
+                <tr><td>지금 400문제</td><td class="num">39</td><td class="num">46</td><td class="num">222</td><td class="num">33</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="chart-note">판단 불가 글은 점수를 매기지 않아서 빼고 셌어요 (300문제 중 255개, 400문제 중 340개).</p>
+        </div>
+      </div>
+
+      <div class="sub">
+        <h4 class="sub-title">연습용과 시험용으로 나누기</h4>
+        <div class="tiles">
+          <div class="tile"><span class="big">240</span><span class="small">연습용 (dev)<br>설명서를 다듬을 때 마음껏 풀어 봐요</span></div>
+          <div class="tile"><span class="big">160</span><span class="small">시험용 (test)<br>맨 마지막에 딱 한 번만 풀어요</span></div>
+        </div>
+        <p>시험 문제를 미리 보고 설명서를 고치면, 실력이 아니라 문제를 외운 점수가 나와요. 그래서 시험용은 끝까지 아껴 둬요.</p>
+      </div>
+
+      <div class="sub">
+        <h4 class="sub-title">진짜 사용자 리뷰 시험지 480개</h4>
+        <p>가짜 문제만으로는 부족해서, 가민·화웨이·삼성헬스 앱의 실제 구글플레이 리뷰(영어·프랑스어)로 시험지를 하나 더 만들었어요. 사람이 붙인 정답(문제 보고 / 기능 요청 / 무관)이 있어서, 분류가 진짜 글에서도 되는지 확인할 수 있어요. 연습용 288개, 시험용 192개예요.</p>
+      </div>
+
+      <div class="sub">
+        <h4 class="sub-title">정답 확인: 선생님 두 명이 따로 채점하기</h4>
+        <ol class="steps3">
+          <li><span class="k">1</span>다른 도우미 2명이 정답을 보지 않고 400문제를 다시 풀어요.</li>
+          <li><span class="k">2</span>원래 정답과 다시 푼 답을 비교해서 다른 곳만 골라요.</li>
+          <li><span class="k">3</span>다른 곳은 기준표를 보고 누가 맞는지 판정해서 고쳐요.</li>
+        </ol>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>항목</th><th class="num">두 답이 같은 비율</th><th class="num">다른 문제 수</th></tr></thead>
+            <tbody>
+              <tr><td>분류</td><td class="num">100%</td><td class="num">0</td></tr>
+              <tr><td>연결 이슈</td><td class="num">100%</td><td class="num">0</td></tr>
+              <tr><td>앱 버전</td><td class="num">100%</td><td class="num">0</td></tr>
+              <tr><td>다른 사람도 겪음</td><td class="num">99.8%</td><td class="num">1</td></tr>
+              <tr><td>우선순위</td><td class="num">99.7%</td><td class="num">1</td></tr>
+              <tr><td>심각도</td><td class="num">99.4%</td><td class="num">2</td></tr>
+              <tr><td>플랫폼</td><td class="num">99.3%</td><td class="num">3</td></tr>
+              <tr><td>재현 절차 있음</td><td class="num">97.0%</td><td class="num">12</td></tr>
+              <tr><td>정보 완성도</td><td class="num">96.5%</td><td class="num">12</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>두 사람 답이 하나라도 다른 문제는 400개 중 18개뿐이었어요. 판정해서 틀린 정답을 고쳤고(먼저 고친 것까지 모두 20개), 가장 많이 갈린 "재현 절차를 어디까지 쳐 줄까"는 기준을 정해 <b>기준표 3판</b>에 적었어요.</p>
+        <p class="file">한계: 정답을 쓴 쪽과 검토한 쪽이 같은 종류의 AI라서, 둘이 같은 실수를 같이 했을 수는 있어요.</p>
+      </div>
+      <p class="file">파일: <code>pace_desk/eval/pace_eval.csv</code> (엑셀로 열림) · 기준표 <code>pace_desk/eval/labeling_guide.md</code> · 보고서 <code>pace_desk/eval/qa/qa_report.md</code></p>
+    </article>
+
+    <article class="leg" aria-labelledby="leg3">
+      <div class="leg-head"><span class="leg-no">구간 3</span><h3 id="leg3">llm.py (Haiku를 부르는 코드)</h3><span class="leg-state">완료</span></div>
+      <p class="analogy"><b>한 줄 설명:</b> 프롬프트를 Haiku에게 보내고 답을 받아 오는 코드예요. 받은 답은 저장해 두고 다시 써요. 모든 실험과 서비스가 이 코드 하나로 Haiku를 불러요.</p>
+      <div class="sub">
+        <h4 class="sub-title">부르는 방식을 바꿨어요</h4>
+        <p>API 크레딧이 얼마 남지 않아서, API 키 대신 <b>Claude Code 헤드리스 모드</b>로 부르기로 했어요.</p>
+        <div class="table-scroll">
+          <table class="compare">
+            <thead><tr><th></th><th>API 키 (직접 전화)</th><th>헤드리스 (비서가 대신 전화)</th></tr></thead>
+            <tbody>
+              <tr><td>요금</td><td>API 요금이 따로 나가요 (크레딧 부족)</td><td>따로 안 나가요. Claude 요금제 사용량에서 빠져요</td></tr>
+              <tr><td>속도</td><td>1번에 약 1초</td><td>1번에 2~5초 (Claude Code를 켜고 끄는 시간), 여러 개를 동시에 불러서 줄여요</td></tr>
+              <tr><td>덧붙는 글</td><td>없음</td><td>약 650토큰 (환경·계정 안내). 모든 호출에 똑같이 붙어서 실험끼리 비교하는 데는 문제없어요</td></tr>
+              <tr><td>지금 쓰는 것</td><td></td><td class="yes">이쪽을 써요</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="sub">
+        <h4 class="sub-title">llm.py가 하는 일</h4>
+        <ul class="plain">
+          <li>시스템 프롬프트(매번 같은 규칙)와 사용자 글(이번에 처리할 글)을 나눠서 보내요.</li>
+          <li>JSON 모양을 정해 주면 정확히 그 모양으로 답을 받아요.</li>
+          <li>얼마나 깊이 생각할지(effort)를 정할 수 있어요.</li>
+          <li>걸린 시간, 토큰, 비용을 매번 적어요.</li>
+          <li><b>받은 답은 공책에 적어 두고 다시 써요.</b> 같은 질문은 다시 전화하지 않아요. 사용 한도에 걸려 멈춰도 이어서 할 수 있어요.</li>
+          <li>여러 개를 동시에 부르고, 사용 한도에 걸리면 바로 멈춰요.</li>
+        </ul>
+      </div>
+      <div class="sub">
+        <h4 class="sub-title">시험해 본 결과 (연습용 문제 4개)</h4>
+        <div class="tiles">
+          <div class="tile"><span class="big">2.6초</span><span class="small">4문제를 동시에 불러서 걸린 시간</span></div>
+          <div class="tile"><span class="big">0초</span><span class="small">두 번째에는 공책의 답을 써서 호출 0번</span></div>
+          <div class="tile"><span class="big">2 / 4</span><span class="small">한 줄짜리 설명만 줬을 때 맞힌 수</span></div>
+        </div>
+        <p>한 줄 설명으로는 절반만 맞혀요. 시험지가 어렵게 만들어졌다는 뜻이고, 다음 구간에서 설명서를 다듬어야 하는 이유예요.</p>
+      </div>
+      <p class="file">파일: <code>pace_desk/llm.py</code> · 규칙 <code>CLAUDE.md</code> (Haiku 5.5만 쓰고, 헤드리스로 부르기)</p>
+    </article>
+
+  </div>
+</section>
+
+<section aria-labelledby="req-title">
+  <h2 id="req-title">과제 필수 조건 16개, 어디서 채우나</h2>
+  <p class="section-lede">수업에서 정한 필수 조건이에요. 모든 조건을 채웠어요. 자세한 결과는 최종 평가 보고서에 있어요.</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>조건</th><th>쉽게 말하면</th><th>어디서</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr><td>System·User 프롬프트 분리</td><td>규칙과 이번 글을 나눠서 주기</td><td>구간 3 llm.py</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>주요 파라미터 설정</td><td>모델, 생각 깊이(effort) 정하기</td><td>구간 3·4</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>Markdown 템플릿</td><td>설명서를 제목·목록으로 정리하기</td><td>구간 4</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>Few-shot</td><td>예시 문제와 정답을 같이 주기</td><td>구간 4</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>Decomposition·Prompt Chaining</td><td>큰 일을 분류 → 추출 → 점수로 나눠 차례로 하기</td><td>구간 4~7</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>CoT·Rubric</td><td>생각 단계 적기, 기준표대로 점수 매기기</td><td>구간 4·7</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>정보 부족 시 답변 불가</td><td>모르면 "판단 불가"라고 하기</td><td>시험지 60문제 준비 → 구간 4</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>Structured Outputs (JSON Schema)</td><td>정해진 모양으로 답 받기</td><td>구간 3 llm.py → 구간 4~7</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>Function calling</td><td>AI가 기록부 검색 같은 도구를 쓰게 하기</td><td>구간 6</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>Context 선별·배치·상태 관리</td><td>필요한 정보만 골라 알맞은 자리에 넣기</td><td>구간 7·8</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>Prefix cache 고려 배치</td><td>안 바뀌는 내용을 앞에 둬서 빠르고 싸게</td><td>구간 4부터</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>여러 LLM 태스크 조합</td><td>분류·추출·점수를 이어 붙여 서비스로</td><td>구간 7·8</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>입력·정답 평가셋과 지표</td><td>시험지와 목표 점수 만들기</td><td>구간 0·2</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>Python 자동 채점 + CSV·Excel</td><td>코드로 채점하고 엑셀로 보기</td><td>시험지 CSV 완료 → 채점은 구간 4</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>품질·응답시간·비용 비교</td><td>점수, 속도, 돈을 같이 비교하기</td><td>구간 3 llm.py가 기록 → 구간 4~9</td><td><span class="tag done">완료</span></td></tr>
+        <tr><td>Baseline 후 한 변수씩 개선</td><td>기본부터 재고, 한 가지씩만 바꿔 보기</td><td>구간 4~7</td><td><span class="tag done">완료</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section aria-labelledby="ahead-title">
+  <h2 id="ahead-title">구간 4~9 결과</h2>
+  <ol class="ahead">
+    <li><span class="dot" aria-hidden="true">4</span><div><h3>분류 실험 <span class="tag done">완료</span></h3><p>0~12회차를 시험해 7회차(규칙 + 기능 목록 + 이유 먼저 쓰기)를 골랐어요. 연습 문제 99.2%, 시험용 98.1%예요. 자세한 기록: <a href="https://claude.ai/artifact/56iMzcgCazLeDeurZFmaqo">4단계 분류 실험 기록</a></p></div></li>
+    <li><span class="dot" aria-hidden="true">5</span><div><h3>추출 실험 <span class="tag done">완료</span></h3><p>규칙과 예시 3개를 넣은 2회차를 골랐어요. 시험용에서 플랫폼·앱 버전 100%, 글에 없는 값 지어내기 0%예요.</p></div></li>
+    <li><span class="dot" aria-hidden="true">6</span><div><h3>도구 <span class="tag done">완료</span></h3><p>기록부 검색 도구 세 개를 만들고, Haiku가 직접 부를 수 있게 도구 서버(MCP)로 연결했어요.</p></div></li>
+    <li><span class="dot" aria-hidden="true">7</span><div><h3>연결·점수 <span class="tag done">완료</span></h3><p>Haiku가 도구로 직접 찾는 3회차를 골랐어요. 시험용에서 이슈 연결 96.3%, 우선순위 98.5%예요.</p></div></li>
+    <li><span class="dot" aria-hidden="true">8</span><div><h3>웹 서비스 <span class="tag done">완료</span></h3><p>제보를 넣으면 분류, 연결된 이슈, 우선순위, 더 물어볼 것이 화면에 나와요. 부족한 정보를 덧붙이면 합쳐서 다시 분석해요. 제보 1건에 약 8초예요.</p></div></li>
+    <li><span class="dot" aria-hidden="true">9</span><div><h3>최종 평가 <span class="tag done">완료</span></h3><p>시험용 문제를 한 번만 풀어 목표 지표를 모두 통과했어요. 결과: <a href="https://claude.ai/artifact/KM7VQhGskvEs6qCMztMoSn">PACE 최종 평가 보고서</a></p></div></li>
+  </ol>
+</section>
+
+<section aria-labelledby="words-title">
+  <h2 id="words-title">용어 사전</h2>
+  <dl class="glossary">
+    <div><dt>평가셋 (시험지)</dt><dd>정답이 붙은 문제 모음이에요. AI가 잘하는지 채점할 때 써요.</dd></div>
+    <div><dt>정답 (골드)</dt><dd>기준표대로 붙인 정답이에요.</dd></div>
+    <div><dt>연습용·시험용 (dev·test)</dt><dd>연습용으로 설명서를 다듬고, 시험용은 마지막에 한 번만 풀어요.</dd></div>
+    <div><dt>프롬프트 (설명서)</dt><dd>AI에게 주는 지시문이에요.</dd></div>
+    <div><dt>시스템 프롬프트</dt><dd>매번 같은 역할과 규칙이에요. 이번에 처리할 글은 사용자 프롬프트로 따로 줘요.</dd></div>
+    <div><dt>Few-shot</dt><dd>설명서에 예시 문제와 정답을 몇 개 같이 넣는 방법이에요.</dd></div>
+    <div><dt>CoT</dt><dd>답하기 전에 생각하는 단계를 적게 하는 방법이에요.</dd></div>
+    <div><dt>Rubric (기준표)</dt><dd>점수를 매기는 규칙표예요.</dd></div>
+    <div><dt>JSON Schema</dt><dd>답의 모양을 정한 틀이에요. 어떤 칸에 어떤 값만 넣을 수 있는지 정해요.</dd></div>
+    <div><dt>토큰</dt><dd>AI가 글을 세는 단위예요. 토큰이 많을수록 느리고 비싸져요.</dd></div>
+    <div><dt>effort</dt><dd>AI가 얼마나 깊이 생각할지 정하는 값이에요. 깊을수록 느리고 비싸요.</dd></div>
+    <div><dt>헤드리스 모드</dt><dd>Claude Code를 화면 없이 명령 한 줄로 부르는 방법이에요.</dd></div>
+    <div><dt>캐시 (공책)</dt><dd>한 번 받은 답을 저장해 두고 다시 쓰는 것이에요.</dd></div>
+    <div><dt>이중 채점</dt><dd>두 사람이 따로 풀어서 답이 다른 곳만 다시 보는 정답 확인 방법이에요.</dd></div>
+    <div><dt>제한 사항</dt><dd>고장이 아니라 원래 그렇게 만든 것이에요. 예: 사진은 10MB까지.</dd></div>
+    <div><dt>재발</dt><dd>고쳤던 문제가 다시 생긴 것이에요. 우선순위를 크게 올려요.</dd></div>
+  </dl>
+</section>
+
+<section aria-labelledby="files-title">
+  <h2 id="files-title">파일 위치</h2>
+  <p class="section-lede">모두 프로젝트 폴더(<code>fde</code>) 안에 있어요.</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>무엇</th><th>어디</th></tr></thead>
+      <tbody>
+        <tr><td>기록부</td><td><code>pace_desk/data/pace_db.json</code></td></tr>
+        <tr><td>기준표 (정답 규칙)</td><td><code>pace_desk/eval/labeling_guide.md</code></td></tr>
+        <tr><td>시험지 (엑셀로 열림)</td><td><code>pace_desk/eval/pace_eval.csv</code></td></tr>
+        <tr><td>시험지 검사·합치기</td><td><code>pace_desk/eval/build_eval_set.py</code></td></tr>
+        <tr><td>실제 리뷰 시험지</td><td><code>pace_desk/eval/real/real_reviews_eval.csv</code></td></tr>
+        <tr><td>정답 확인 보고서</td><td><code>pace_desk/eval/qa/qa_report.md</code></td></tr>
+        <tr><td>고친 정답 기록</td><td><code>pace_desk/eval/qa/label_changes.md</code></td></tr>
+        <tr><td>Haiku를 부르는 코드</td><td><code>pace_desk/llm.py</code></td></tr>
+        <tr><td>프로젝트 규칙</td><td><code>CLAUDE.md</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <p>숫자는 2026-11-25 기준이에요. 시험 문제 예시는 모두 연습용(dev)에서 골랐어요.</p>
+  <p>실제 리뷰 시험지 출처: Wei et al., ICTAI 2023 · Zenodo 11066414 · MIT 라이선스</p>
+</footer>
+
+</div>

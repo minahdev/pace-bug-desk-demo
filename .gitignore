@@ -1,0 +1,13 @@
+# 비밀 키와 개인 설정: 절대 올리지 않음
+.env
+.env.*
+
+# 가상환경, 캐시
+.venv/
+__pycache__/
+.DS_Store
+pace_desk/llm_cache/
+
+# 다른 연구팀의 리뷰 데이터 (출처에서 직접 받기)
+pace_desk/eval/real/raw/
+pace_desk/eval/real/real_reviews_eval.*

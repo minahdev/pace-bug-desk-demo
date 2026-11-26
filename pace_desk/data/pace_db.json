@@ -1,0 +1,372 @@
+{
+  "meta": {
+    "app": "PACE",
+    "description": "과제용 더미 데이터예요. 개발 로그(dev.minahdev.cloud)의 실제 버그를 바탕으로 하고, 버전 번호·제보 수·일부 날짜와 source가 '가상'인 항목은 지어냈어요.",
+    "today": "2026-11-24",
+    "platforms": ["Android 앱", "웹"],
+    "latest": {"Android 앱": "1.2.0", "웹": "2026.11.18", "서버": "2026.11.18"},
+    "statuses": {
+      "버그": {"확인 중": "원인을 찾는 중", "수정 중": "원인을 알고 고치는 중", "해결됨": "고친 버전이 나옴", "제한 사항": "고장이 아니라 지금 설계상 안 되는 것"},
+      "개선 요청": {"검토 중": "요청을 받아 검토하는 중", "계획됨": "다음 버전에 넣기로 함", "출시됨": "요청한 기능이 이미 나옴", "보류": "지금은 하지 않기로 함"}
+    }
+  },
+  "accounts": [
+    {"id": "DEV01", "name": "PACE 개발자", "role": "개발자"},
+    {"id": "U1001", "name": "걷는고양이", "role": "사용자"},
+    {"id": "U1002", "name": "아침러너", "role": "사용자"},
+    {"id": "U1003", "name": "만보왕", "role": "사용자"},
+    {"id": "U1004", "name": "수면부족", "role": "사용자"},
+    {"id": "U1005", "name": "헬린이", "role": "사용자"}
+  ],
+  "issues": [
+    {
+      "id": "PACE-101", "type": "버그", "area": "로그인·계정", "platforms": ["웹"],
+      "title": "웹에서 로그아웃해도 다시 로그인됨",
+      "symptom": "웹 마이페이지나 프로필 시트에서 로그아웃을 누르면 첫 화면으로 가지만, 다음 화면에서 다시 로그인된 상태가 된다. 배포된 사이트에서만 생기고 개발 PC에서는 재현되지 않았다.",
+      "keywords": ["로그아웃", "다시 로그인", "자동 로그인", "세션", "쿠키", "웹"],
+      "status": "해결됨", "fixed_in": ["웹 2026.08.10"], "planned_in": null,
+      "workaround": "최신 웹으로 새로고침하면 해결돼요.",
+      "first_reported": "2026-08-09", "report_count": 6, "related": ["PACE-117"], "source": "개발 로그 2026-08-10"
+    },
+    {
+      "id": "PACE-102", "type": "버그", "area": "로그인·계정", "platforms": ["웹"],
+      "title": "로그인 실패 메시지와 응답 시간으로 계정 존재 여부가 드러남",
+      "symptom": "구글로 가입한 아이디로 비밀번호 로그인을 시도하면 'Invalid salt'라는 낯선 오류가 떴다. 메시지를 고친 뒤에도 응답 시간 차이로 어떤 아이디가 가입돼 있는지 알 수 있었다.",
+      "keywords": ["Invalid salt", "로그인 오류", "구글 계정", "비밀번호 로그인", "보안", "응답 시간"],
+      "status": "해결됨", "fixed_in": ["서버 2026.08.26"], "planned_in": null,
+      "workaround": null,
+      "first_reported": "2026-08-20", "report_count": 1, "related": [], "source": "개발 로그 2026-08-26"
+    },
+    {
+      "id": "PACE-103", "type": "버그", "area": "커뮤니티", "platforms": ["Android 앱", "웹"],
+      "title": "서버 업데이트 후 커뮤니티 사진이 사라짐",
+      "symptom": "커뮤니티에 사진을 올리면 처음에는 잘 보이는데, 서버를 다시 배포하고 나면 사진만 사라진다. 글은 그대로 남아 있다.",
+      "keywords": ["커뮤니티", "사진", "사라짐", "업로드", "이미지 없음", "재배포"],
+      "status": "해결됨", "fixed_in": ["서버 2026.09.21"], "planned_in": null,
+      "workaround": "고치기 전에 사라진 사진은 되살릴 수 없어 다시 올려야 해요.",
+      "first_reported": "2026-09-19", "report_count": 9, "related": ["PACE-110"], "source": "개발 로그 2026-09-21"
+    },
+    {
+      "id": "PACE-104", "type": "버그", "area": "마이 페이지", "platforms": ["Android 앱"],
+      "title": "가입만 한 회원은 마이 화면이 전부 빈칸",
+      "symptom": "가입 직후 마이 탭에 들어가면 이름·닉네임·이메일·성별·생년월일·전화번호가 모두 비어 있다. 가입할 때 적은 닉네임과 이메일도 안 보인다.",
+      "keywords": ["마이", "프로필", "빈칸", "닉네임 안 보임", "이메일 안 보임", "가입 직후"],
+      "status": "해결됨", "fixed_in": ["서버 2026.09.29"], "planned_in": null,
+      "workaround": "앱 업데이트 없이 앱을 다시 열면 보여요.",
+      "first_reported": "2026-09-27", "report_count": 7, "related": ["PACE-105"], "source": "개발 로그 2026-09-29"
+    },
+    {
+      "id": "PACE-105", "type": "버그", "area": "마이 페이지", "platforms": ["Android 앱"],
+      "title": "마이 페이지 초록 카드 아래가 통째로 안 보임",
+      "symptom": "앱 마이 페이지에 초록 프로필 카드만 보이고, 그 아래 요약 3칸·기본 정보·신체·운동 습관·로그아웃 버튼이 하나도 그려지지 않는다. 내용이 덜 채워진 화면처럼 보인다.",
+      "keywords": ["마이 페이지", "아래 안 보임", "빈 화면", "로그아웃 버튼 없음", "요약", "하얀 화면"],
+      "status": "해결됨", "fixed_in": ["앱 1.0.1"], "planned_in": null,
+      "workaround": "앱을 1.0.1 이상으로 업데이트해 주세요.",
+      "first_reported": "2026-09-27", "report_count": 12, "related": ["PACE-104"], "source": "개발 로그 2026-09-30"
+    },
+    {
+      "id": "PACE-106", "type": "버그", "area": "AI 챗", "platforms": ["Android 앱"],
+      "title": "앱 AI 챗이 자주 실패함",
+      "symptom": "앱에서 AI 챗(Gemini)에 말을 걸면 답 대신 오류가 나는 일이 잦았다. 6시간 동안 11번 실패했다. 기본 모델이 사라졌을 때 예비 모델로 넘어가지 못했다.",
+      "keywords": ["AI 챗", "Gemini", "채팅 오류", "답이 안 옴", "실패", "502"],
+      "status": "해결됨", "fixed_in": ["서버 2026.10.01"], "planned_in": null,
+      "workaround": "앱 업데이트 없이 다시 시도하면 돼요.",
+      "first_reported": "2026-09-30", "report_count": 15, "related": ["PACE-111", "PACE-112"], "source": "개발 로그 2026-10-01"
+    },
+    {
+      "id": "PACE-107", "type": "버그", "area": "홈·건강", "platforms": ["Android 앱"],
+      "title": "걸음 수가 삼성헬스와 다르고 걸어도 바로 안 올라감",
+      "symptom": "홈 카드의 걸음 수가 삼성헬스 화면과 다르고, 걸어도 숫자가 바로 올라가지 않는다. Health Connect 값만 읽어서 삼성헬스가 올려 줄 때까지 숫자가 밀렸다.",
+      "keywords": ["걸음 수", "삼성헬스", "다름", "안 올라감", "Health Connect", "만보기"],
+      "status": "해결됨", "fixed_in": ["앱 1.0.2"], "planned_in": null,
+      "workaround": "앱을 1.0.2 이상으로 업데이트해 주세요.",
+      "first_reported": "2026-09-28", "report_count": 23, "related": ["PACE-120", "PACE-124"], "source": "개발 로그 2026-10-01"
+    },
+    {
+      "id": "PACE-108", "type": "버그", "area": "로그인·계정", "platforms": ["Android 앱"],
+      "title": "구글 로그인 첫 시도가 실패하고 두 번째에 됨",
+      "symptom": "앱에서 구글 로그인을 누르면 처음 한 번은 실패하고, 다시 누르면 된다. 와이파이와 데이터가 바뀌는 순간 응답이 끊긴 경우였다.",
+      "keywords": ["구글 로그인", "첫 시도 실패", "로그인 실패", "와이파이", "데이터 전환"],
+      "status": "해결됨", "fixed_in": ["앱 1.0.1"], "planned_in": null,
+      "workaround": "앱을 1.0.1 이상으로 업데이트해 주세요.",
+      "first_reported": "2026-09-27", "report_count": 3, "related": [], "source": "개발 로그 2026-09-29"
+    },
+    {
+      "id": "PACE-109", "type": "버그", "area": "커뮤니티", "platforms": ["Android 앱", "웹"],
+      "title": "사진 10MB·동영상 50MB가 넘으면 커뮤니티 업로드 실패",
+      "symptom": "커뮤니티에 큰 사진이나 긴 동영상을 올리면 업로드가 실패한다. 사진은 10MB, 동영상은 50MB까지만 받는다.",
+      "keywords": ["업로드 실패", "사진", "동영상", "용량", "10MB", "50MB", "안 올라감"],
+      "status": "제한 사항", "fixed_in": [], "planned_in": null,
+      "workaround": "사진은 10MB, 동영상은 50MB 이하로 줄여서 올려 주세요.",
+      "first_reported": "2026-09-21", "report_count": 5, "related": ["PACE-113"], "source": "개발 로그 2026-09-21"
+    },
+    {
+      "id": "PACE-110", "type": "버그", "area": "커뮤니티", "platforms": ["Android 앱", "웹"],
+      "title": "일부 커뮤니티 사진이 엑스박스로 보임",
+      "symptom": "커뮤니티 글은 열리는데 일부 사진 자리가 엑스박스(깨진 이미지)로 보인다. 사진을 저장하는 위치와 보여 주는 주소가 한 칸 어긋나 있다.",
+      "keywords": ["엑스박스", "깨진 이미지", "사진 안 보임", "커뮤니티", "이미지 로딩"],
+      "status": "확인 중", "fixed_in": [], "planned_in": null,
+      "workaround": null,
+      "first_reported": "2026-09-22", "report_count": 2, "related": ["PACE-103"], "source": "개발 로그 2026-09-21 (상태는 가상)"
+    },
+    {
+      "id": "PACE-111", "type": "버그", "area": "AI 챗", "platforms": ["웹"],
+      "title": "웹 AI 챗이 가끔 502 오류",
+      "symptom": "웹에서 AI 챗을 쓰면 가끔 502 오류가 난다. 웹 챗은 서버를 거치지 않고 모델 하나만 써서, 그 모델이 내려가면 예비 모델로 넘어가지 못한다.",
+      "keywords": ["웹 AI 챗", "502", "Gemini", "채팅 오류", "답이 안 옴"],
+      "status": "수정 중", "fixed_in": [], "planned_in": "웹 다음 배포",
+      "workaround": "앱의 AI 챗은 예비 모델로 넘어가니 앱으로 써 주세요.",
+      "first_reported": "2026-10-02", "report_count": 4, "related": ["PACE-106"], "source": "개발 로그 2026-10-01"
+    },
+    {
+      "id": "PACE-112", "type": "버그", "area": "영수증 인식", "platforms": ["Android 앱", "웹"],
+      "title": "영수증 인식이 가끔 실패",
+      "symptom": "영수증 사진을 올려 인식하면 가끔 실패한다. AI 챗과 같은 원인인데, 영수증 인식 쪽은 예비 모델로 넘어가는 조건이 아직 고쳐지지 않았다.",
+      "keywords": ["영수증", "인식 실패", "OCR", "사진 인식", "Gemini"],
+      "status": "수정 중", "fixed_in": [], "planned_in": "서버 다음 배포",
+      "workaround": "잠시 뒤 다시 시도해 주세요.",
+      "first_reported": "2026-10-03", "report_count": 3, "related": ["PACE-106"], "source": "개발 로그 2026-10-01"
+    },
+    {
+      "id": "PACE-113", "type": "버그", "area": "커뮤니티", "platforms": ["Android 앱"],
+      "title": "사진 여러 장을 올리면 순서가 뒤바뀜",
+      "symptom": "1.2.0에서 생긴 사진 여러 장 올리기로 고른 순서대로 올려도, 올라간 글에서는 사진 순서가 섞여 보인다.",
+      "keywords": ["사진 순서", "여러 장", "뒤바뀜", "커뮤니티", "업로드"],
+      "status": "확인 중", "fixed_in": [], "planned_in": null,
+      "workaround": null,
+      "first_reported": "2026-11-20", "report_count": 2, "related": ["PACE-109"], "source": "가상"
+    },
+    {
+      "id": "PACE-114", "type": "버그", "area": "운동 추천", "platforms": ["Android 앱", "웹"],
+      "title": "오늘 운동 추천이 며칠째 똑같음",
+      "symptom": "기분과 일기를 바꿔 써도 오늘 운동 추천이 며칠째 같은 운동으로 나온다.",
+      "keywords": ["운동 추천", "똑같음", "추천 안 바뀜", "오늘 운동", "기분", "일기"],
+      "status": "확인 중", "fixed_in": [], "planned_in": null,
+      "workaround": null,
+      "first_reported": "2026-11-10", "report_count": 6, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-115", "type": "버그", "area": "홈·건강", "platforms": ["Android 앱"],
+      "title": "수면 직접 입력값이 다음 날 사라짐",
+      "symptom": "워치가 없어서 수면 시간을 직접 입력해 두면, 다음 날 앱을 열었을 때 어제 입력한 값이 비어 있다. 1.2.0의 수면 화면 개편 뒤 생겼다.",
+      "keywords": ["수면", "직접 입력", "사라짐", "수면 기록", "저장 안 됨"],
+      "status": "수정 중", "fixed_in": [], "planned_in": "앱 1.2.1",
+      "workaround": null,
+      "first_reported": "2026-11-19", "report_count": 3, "related": ["PACE-121"], "source": "가상"
+    },
+    {
+      "id": "PACE-116", "type": "버그", "area": "마이 페이지", "platforms": ["Android 앱"],
+      "title": "프로필 사진을 바꿔도 예전 사진이 보임",
+      "symptom": "마이 페이지에서 프로필 사진을 바꾸면 저장은 됐다고 나오는데 화면에는 예전 사진이 계속 보인다.",
+      "keywords": ["프로필 사진", "안 바뀜", "예전 사진", "캐시", "마이 페이지"],
+      "status": "해결됨", "fixed_in": ["앱 1.1.1"], "planned_in": null,
+      "workaround": "앱을 1.1.1 이상으로 업데이트해 주세요.",
+      "first_reported": "2026-10-25", "report_count": 4, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-117", "type": "버그", "area": "로그인·계정", "platforms": ["Android 앱"],
+      "title": "앱에서 로그아웃해도 다시 켜면 로그인돼 있음",
+      "symptom": "앱 마이 페이지에서 로그아웃한 뒤 앱을 완전히 껐다 켜면 로그인된 상태로 열린다.",
+      "keywords": ["로그아웃", "앱", "다시 로그인", "자동 로그인", "앱 재실행"],
+      "status": "확인 중", "fixed_in": [], "planned_in": null,
+      "workaround": null,
+      "first_reported": "2026-11-12", "report_count": 2, "related": ["PACE-101"], "source": "가상"
+    },
+    {
+      "id": "PACE-118", "type": "버그", "area": "로그인·계정", "platforms": ["웹"],
+      "title": "비밀번호 재설정 메일이 오지 않음",
+      "symptom": "웹에서 비밀번호 찾기를 누르면 메일을 보냈다고 나오지만 메일이 오지 않는다. 일부는 스팸함에서 찾았다.",
+      "keywords": ["비밀번호 찾기", "재설정 메일", "메일 안 옴", "스팸함"],
+      "status": "확인 중", "fixed_in": [], "planned_in": null,
+      "workaround": "스팸함을 먼저 확인해 주세요.",
+      "first_reported": "2026-11-03", "report_count": 4, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-119", "type": "버그", "area": "마이 페이지", "platforms": ["웹"],
+      "title": "생년월일을 저장하면 하루 전 날짜로 바뀜",
+      "symptom": "웹 마이 페이지에서 생년월일을 저장하면 하루 전 날짜로 저장된다.",
+      "keywords": ["생년월일", "하루 전", "날짜 오류", "저장", "마이 페이지"],
+      "status": "수정 중", "fixed_in": [], "planned_in": "웹 다음 배포",
+      "workaround": null,
+      "first_reported": "2026-11-14", "report_count": 3, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-120", "type": "버그", "area": "홈·건강", "platforms": ["Android 앱"],
+      "title": "Health Connect 권한을 주지 않으면 건강 카드가 비어 있음",
+      "symptom": "Health Connect 권한을 허용하지 않으면 홈의 걸음·수면·안정시 심박·어제 운동이 비어 있다. 앱을 켜기 전에 걸은 걸음도 들어오지 않는다.",
+      "keywords": ["Health Connect", "권한", "걸음 0", "비어 있음", "수면 없음", "심박 없음"],
+      "status": "제한 사항", "fixed_in": [], "planned_in": null,
+      "workaround": "휴대폰 설정에서 Health Connect 권한을 허용해 주세요.",
+      "first_reported": "2026-10-02", "report_count": 9, "related": ["PACE-107"], "source": "개발 로그 2026-10-01"
+    },
+    {
+      "id": "PACE-121", "type": "버그", "area": "홈·건강", "platforms": ["Android 앱"],
+      "title": "워치가 없으면 수면 기록이 비어 있음",
+      "symptom": "갤럭시 워치 같은 기기가 없으면 Health Connect에 수면 기록이 없어 수면 칸이 비어 있다.",
+      "keywords": ["수면", "워치 없음", "수면 비어 있음", "수면 기록"],
+      "status": "제한 사항", "fixed_in": [], "planned_in": null,
+      "workaround": "수면 칸의 직접 입력을 써 주세요.",
+      "first_reported": "2026-10-02", "report_count": 5, "related": ["PACE-115"], "source": "개발 로그 2026-10-01"
+    },
+    {
+      "id": "PACE-122", "type": "버그", "area": "홈·건강", "platforms": ["Android 앱"],
+      "title": "안정시 심박이 삼성헬스와 다름",
+      "symptom": "삼성헬스가 안정시 심박을 따로 주지 않는 날에는 앱이 오늘 심박 중 가장 낮은 값으로 대신 보여 준다. 그래서 삼성헬스 화면과 숫자가 다를 수 있다.",
+      "keywords": ["안정시 심박", "심박", "삼성헬스", "다름"],
+      "status": "제한 사항", "fixed_in": [], "planned_in": null,
+      "workaround": "삼성헬스 값과 조금 다를 수 있다고 안내해 주세요.",
+      "first_reported": "2026-10-03", "report_count": 3, "related": [], "source": "개발 로그 2026-10-01"
+    },
+    {
+      "id": "PACE-123", "type": "버그", "area": "설치·기기", "platforms": ["Android 앱"],
+      "title": "안드로이드 8.0 미만 폰에는 설치되지 않음",
+      "symptom": "안드로이드 7 이하 폰에서는 앱을 설치할 수 없다. Health Connect가 안드로이드 8.0 이상에서만 돌아서 앱도 8.0 이상만 지원한다.",
+      "keywords": ["설치 안 됨", "안드로이드 7", "구형 폰", "지원 기기", "호환"],
+      "status": "제한 사항", "fixed_in": [], "planned_in": null,
+      "workaround": "웹 버전은 쓸 수 있어요.",
+      "first_reported": "2026-09-27", "report_count": 2, "related": [], "source": "개발 로그 2026-09-30"
+    },
+    {
+      "id": "PACE-124", "type": "버그", "area": "홈·건강", "platforms": ["Android 앱"],
+      "title": "1.2.0 업데이트 후 걸음 수가 자정에 초기화되지 않음",
+      "symptom": "1.2.0으로 업데이트한 뒤 자정이 지나도 걸음 수가 0으로 돌아가지 않고 어제 걸음에 이어서 쌓인다.",
+      "keywords": ["걸음 수", "자정", "초기화 안 됨", "어제 걸음", "이어짐", "1.2.0"],
+      "status": "확인 중", "fixed_in": [], "planned_in": null,
+      "workaround": null,
+      "first_reported": "2026-11-19", "report_count": 4, "related": ["PACE-107"], "source": "가상"
+    },
+    {
+      "id": "PACE-125", "type": "버그", "area": "홈·건강", "platforms": ["Android 앱"],
+      "title": "어제 운동 카드에 일부 운동 종류가 영어로 나옴",
+      "symptom": "어제 운동 카드에 대부분은 '걷기', '달리기'처럼 나오는데 일부 운동은 'HIGH_INTENSITY_INTERVAL_TRAINING'처럼 영어로 나온다.",
+      "keywords": ["어제 운동", "영어", "운동 종류", "번역"],
+      "status": "해결됨", "fixed_in": ["앱 1.1.0"], "planned_in": null,
+      "workaround": "앱을 1.1.0 이상으로 업데이트해 주세요.",
+      "first_reported": "2026-10-05", "report_count": 2, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-126", "type": "버그", "area": "AI 챗", "platforms": ["Android 앱", "웹"],
+      "title": "AI 챗 답변이 길면 중간에 잘림",
+      "symptom": "AI 챗에 운동 계획처럼 긴 답을 부탁하면 답이 문장 중간에서 끊긴다.",
+      "keywords": ["AI 챗", "답변 잘림", "끊김", "긴 답변"],
+      "status": "확인 중", "fixed_in": [], "planned_in": null,
+      "workaround": null,
+      "first_reported": "2026-11-06", "report_count": 5, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-127", "type": "버그", "area": "커뮤니티", "platforms": ["웹"],
+      "title": "웹 커뮤니티 동영상 미리보기가 검은 화면",
+      "symptom": "웹 커뮤니티에 올린 동영상이 글 목록에서 검은 화면으로만 보인다. 눌러서 재생하면 나온다.",
+      "keywords": ["동영상", "미리보기", "검은 화면", "썸네일", "커뮤니티"],
+      "status": "수정 중", "fixed_in": [], "planned_in": "웹 다음 배포",
+      "workaround": null,
+      "first_reported": "2026-11-08", "report_count": 3, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-128", "type": "버그", "area": "설치·기기", "platforms": ["Android 앱"],
+      "title": "일부 갤럭시 A 기기에서 첫 실행 시 시작 화면에서 멈춤",
+      "symptom": "앱을 설치하고 처음 켜면 로고가 나오는 시작 화면에서 넘어가지 않는다. 갤럭시 A 시리즈 일부에서 생겼다.",
+      "keywords": ["시작 화면", "로고에서 멈춤", "스플래시", "첫 실행", "갤럭시 A", "앱이 안 켜짐"],
+      "status": "해결됨", "fixed_in": ["앱 1.2.0"], "planned_in": null,
+      "workaround": "앱을 1.2.0으로 업데이트해 주세요.",
+      "first_reported": "2026-11-02", "report_count": 6, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-129", "type": "버그", "area": "웹 화면", "platforms": ["웹"],
+      "title": "사파리에서 일부 버튼이 눌리지 않음",
+      "symptom": "아이폰이나 맥의 사파리로 웹에 들어가면 커뮤니티 글쓰기 버튼 같은 일부 버튼이 눌리지 않는다. 크롬에서는 된다.",
+      "keywords": ["사파리", "버튼 안 눌림", "아이폰", "맥", "웹"],
+      "status": "확인 중", "fixed_in": [], "planned_in": null,
+      "workaround": "당분간 크롬으로 접속해 주세요.",
+      "first_reported": "2026-11-15", "report_count": 2, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-201", "type": "개선 요청", "area": "설치·기기", "platforms": ["전체"],
+      "title": "아이폰(iOS) 앱 출시",
+      "symptom": "아이폰에서도 앱으로 쓰고 싶다는 요청. 지금은 안드로이드 앱과 웹만 있다.",
+      "keywords": ["아이폰", "iOS", "앱스토어", "아이폰 앱"],
+      "status": "검토 중", "fixed_in": [], "planned_in": null,
+      "workaround": "아이폰에서는 웹으로 쓸 수 있어요.",
+      "first_reported": "2026-10-01", "report_count": 18, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-202", "type": "개선 요청", "area": "홈·건강", "platforms": ["Android 앱"],
+      "title": "걸음 수 홈 화면 위젯",
+      "symptom": "앱을 열지 않고 휴대폰 홈 화면에서 걸음 수를 보고 싶다는 요청.",
+      "keywords": ["위젯", "홈 화면", "걸음 수 위젯"],
+      "status": "계획됨", "fixed_in": [], "planned_in": "앱 1.3.0",
+      "workaround": null,
+      "first_reported": "2026-10-08", "report_count": 11, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-203", "type": "개선 요청", "area": "AI 챗", "platforms": ["Android 앱", "웹"],
+      "title": "AI 챗 대화 기록 저장",
+      "symptom": "앱을 껐다 켜도 AI 챗에서 나눈 대화가 남아 있었으면 좋겠다는 요청.",
+      "keywords": ["대화 기록", "AI 챗", "저장", "이전 대화", "히스토리"],
+      "status": "검토 중", "fixed_in": [], "planned_in": null,
+      "workaround": null,
+      "first_reported": "2026-10-12", "report_count": 7, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-204", "type": "개선 요청", "area": "커뮤니티", "platforms": ["Android 앱", "웹"],
+      "title": "커뮤니티 글 수정 기능",
+      "symptom": "이미 올린 커뮤니티 글을 고치고 싶다는 요청.",
+      "keywords": ["글 수정", "커뮤니티", "편집", "고치기"],
+      "status": "출시됨", "fixed_in": ["앱 1.1.0", "웹 2026.10.20"], "planned_in": null,
+      "workaround": "글 오른쪽 위 메뉴에서 수정할 수 있어요.",
+      "first_reported": "2026-10-03", "report_count": 9, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-205", "type": "개선 요청", "area": "웹 화면", "platforms": ["Android 앱", "웹"],
+      "title": "다크 모드",
+      "symptom": "어두운 화면(다크 모드)을 지원해 달라는 요청.",
+      "keywords": ["다크 모드", "어두운 화면", "야간 모드"],
+      "status": "검토 중", "fixed_in": [], "planned_in": null,
+      "workaround": null,
+      "first_reported": "2026-10-15", "report_count": 5, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-206", "type": "개선 요청", "area": "홈·건강", "platforms": ["Android 앱"],
+      "title": "갤럭시 워치 앱",
+      "symptom": "워치에서 바로 걸음과 심박을 보고 싶다는 요청.",
+      "keywords": ["워치", "갤럭시 워치", "워치 앱", "스마트워치"],
+      "status": "보류", "fixed_in": [], "planned_in": null,
+      "workaround": null,
+      "first_reported": "2026-10-18", "report_count": 3, "related": [], "source": "가상"
+    },
+    {
+      "id": "PACE-207", "type": "개선 요청", "area": "운동 추천", "platforms": ["Android 앱", "웹"],
+      "title": "운동 추천에 날씨 반영",
+      "symptom": "비 오는 날에는 실내 운동을 추천해 달라는 요청.",
+      "keywords": ["날씨", "운동 추천", "비", "실내 운동"],
+      "status": "검토 중", "fixed_in": [], "planned_in": null,
+      "workaround": null,
+      "first_reported": "2026-11-09", "report_count": 2, "related": ["PACE-114"], "source": "가상"
+    },
+    {
+      "id": "PACE-208", "type": "개선 요청", "area": "홈·건강", "platforms": ["Android 앱"],
+      "title": "걸음 목표 달성 알림",
+      "symptom": "하루 걸음 목표를 채우면 알림을 받고 싶다는 요청.",
+      "keywords": ["알림", "걸음 목표", "푸시", "목표 달성"],
+      "status": "계획됨", "fixed_in": [], "planned_in": "앱 1.3.0",
+      "workaround": null,
+      "first_reported": "2026-11-11", "report_count": 4, "related": [], "source": "가상"
+    }
+  ],
+  "releases": [
+    {"id": "웹 2026.08.10", "platform": "웹", "version": "2026.08.10", "date": "2026-08-10", "notes": ["로그아웃해도 다시 로그인되던 문제 수정"], "fixes": ["PACE-101"], "source": "개발 로그 2026-08-10"},
+    {"id": "서버 2026.08.26", "platform": "서버", "version": "2026.08.26", "date": "2026-08-26", "notes": ["로그인 실패 응답 내용과 걸리는 시간을 통일"], "fixes": ["PACE-102"], "source": "개발 로그 2026-08-26"},
+    {"id": "서버 2026.09.21", "platform": "서버", "version": "2026.09.21", "date": "2026-09-21", "notes": ["커뮤니티 사진을 서버를 다시 배포해도 남는 저장소로 옮김"], "fixes": ["PACE-103"], "source": "개발 로그 2026-09-21"},
+    {"id": "앱 1.0.0", "platform": "Android 앱", "version": "1.0.0", "date": "2026-09-26", "notes": ["첫 네이티브 앱 출시: 홈(걸음·수면·안정시 심박), 마이, 커뮤니티, AI 챗, 구글 로그인", "안드로이드 8.0 이상 지원"], "fixes": [], "source": "개발 로그 2026-09-30 (날짜는 가상)"},
+    {"id": "서버 2026.09.29", "platform": "서버", "version": "2026.09.29", "date": "2026-09-29", "notes": ["가입만 한 회원도 마이 화면에 닉네임·이메일이 보이게 수정", "앱 전용 API와 구글 로그인 서버 검증 추가", "오늘 운동 추천 추가"], "fixes": ["PACE-104"], "source": "개발 로그 2026-09-29"},
+    {"id": "앱 1.0.1", "platform": "Android 앱", "version": "1.0.1", "date": "2026-09-30", "notes": ["마이 페이지 아래가 안 그려지던 문제 수정", "구글 로그인 중 네트워크가 끊기면 한 번 더 시도"], "fixes": ["PACE-105", "PACE-108"], "source": "개발 로그 2026-09-29·09-30 (버전은 가상)"},
+    {"id": "서버 2026.10.01", "platform": "서버", "version": "2026.10.01", "date": "2026-10-01", "notes": ["앱 AI 챗이 기본 모델 실패 시 예비 모델로 넘어가도록 수정"], "fixes": ["PACE-106"], "source": "개발 로그 2026-10-01"},
+    {"id": "앱 1.0.2", "platform": "Android 앱", "version": "1.0.2", "date": "2026-10-01", "notes": ["걸음 수를 폰 걸음 센서로 실시간 표시하고, 앱을 켜기 전 걸음은 Health Connect로 맞춤", "수면 직접 입력과 어제 운동 카드 추가"], "fixes": ["PACE-107"], "source": "개발 로그 2026-10-01 (버전은 가상)"},
+    {"id": "앱 1.1.0", "platform": "Android 앱", "version": "1.1.0", "date": "2026-10-20", "notes": ["커뮤니티 글 수정 기능 추가", "어제 운동 종류를 한글로 표시"], "fixes": ["PACE-204", "PACE-125"], "source": "가상"},
+    {"id": "웹 2026.10.20", "platform": "웹", "version": "2026.10.20", "date": "2026-10-20", "notes": ["커뮤니티 글 수정 기능 추가"], "fixes": ["PACE-204"], "source": "가상"},
+    {"id": "앱 1.1.1", "platform": "Android 앱", "version": "1.1.1", "date": "2026-11-04", "notes": ["프로필 사진을 바꿔도 예전 사진이 보이던 문제 수정"], "fixes": ["PACE-116"], "source": "가상"},
+    {"id": "앱 1.2.0", "platform": "Android 앱", "version": "1.2.0", "date": "2026-11-18", "notes": ["커뮤니티에 사진 여러 장 올리기", "수면 기록 화면 개편", "일부 갤럭시 A 기기에서 시작 화면에 멈추던 문제 수정"], "fixes": ["PACE-128"], "source": "가상"},
+    {"id": "웹 2026.11.18", "platform": "웹", "version": "2026.11.18", "date": "2026-11-18", "notes": ["마이 페이지 화면 정리"], "fixes": [], "source": "가상"},
+    {"id": "서버 2026.11.18", "platform": "서버", "version": "2026.11.18", "date": "2026-11-18", "notes": ["운동 추천 응답 속도 개선"], "fixes": [], "source": "가상"}
+  ]
+}

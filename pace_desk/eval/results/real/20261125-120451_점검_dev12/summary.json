@@ -1,0 +1,47 @@
+{
+  "prompt": "cls_c7_real.md",
+  "metrics": {
+    "n": 12,
+    "accuracy": 0.9166666666666666,
+    "recall_by_gold": {
+      "문제 보고": 1.0,
+      "기능 요청": 1.0,
+      "무관": 0.6666666666666666,
+      "둘 다": 1.0
+    },
+    "by_lang": {
+      "en": 1.0,
+      "fr": 0.8
+    },
+    "by_app": {
+      "Garmin Connect": 1.0,
+      "Huawei Health": 0.8333333333333334,
+      "Samsung Health": 1.0
+    },
+    "format_errors": 0,
+    "confusion": {
+      "기능 요청 → 개선 요청": 4,
+      "둘 다 → 버그": 1,
+      "무관 → 버그": 1,
+      "무관 → 판단 불가": 2,
+      "문제 보고 → 버그": 4
+    }
+  },
+  "usage": {
+    "total": 12,
+    "ok": 12,
+    "failed": 0,
+    "missing": 0,
+    "retried": 0,
+    "from_cache": 0,
+    "new_calls": 12,
+    "latency_ms_p50": 1871,
+    "latency_ms_p95": 4432,
+    "input_tokens_avg": 3084.2,
+    "cache_read_tokens_avg": 1455.0,
+    "output_tokens_avg": 316.1,
+    "thinking_tokens_avg": 136.0,
+    "cost_usd": 0.005979,
+    "cost_usd_new": 0.005979
+  }
+}

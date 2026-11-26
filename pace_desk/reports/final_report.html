@@ -1,0 +1,332 @@
+<title>PACE 최종 평가 보고서</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* 레이아웃: 진행 지도·4단계 기록과 같은 한 줄 보고서. 결론 → 서비스 흐름 → 목표 대비 결과 → 태스크별 개선 히스토리 → 끝까지 시험 → 비용·시간 → 조건 체크 → 한계 → 파일 순서 */
+:root {
+  --bg: #f2f5f3;
+  --surface: #fcfcfb;
+  --ink: #14201a;
+  --ink-2: #46524b;
+  --muted: #66716a;
+  --line: #d6ddd8;
+  --accent: #16774a;
+  --accent-soft: #dfefe6;
+  --next: #9c5304;
+  --next-soft: #faead5;
+  --quote: #e9efeb;
+  --bar: #2a78d6;
+  --track: #e4e9e6;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111513; --surface: #1a1a19; --ink: #e9efeb; --ink-2: #b5bfb8; --muted: #919b94; --line: #2d3430;
+    --accent: #4fc08b; --accent-soft: #17301f; --next: #f0a44c; --next-soft: #392912; --quote: #212723;
+    --bar: #3987e5; --track: #2a302c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111513; --surface: #1a1a19; --ink: #e9efeb; --ink-2: #b5bfb8; --muted: #919b94; --line: #2d3430;
+  --accent: #4fc08b; --accent-soft: #17301f; --next: #f0a44c; --next-soft: #392912; --quote: #212723;
+  --bar: #3987e5; --track: #2a302c; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+.wrap { max-width: 900px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 72px; display: grid; gap: 60px; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.3; margin: 0; }
+h1 { font-size: clamp(30px, 6vw, 44px); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 18px; font-weight: 700; }
+p { margin: 0; }
+code { font-family: var(--font-mono); font-size: 0.86em; background: var(--quote); padding: 1px 6px; border-radius: 4px; }
+b { font-weight: 600; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--bar); outline-offset: 2px; border-radius: 4px; }
+section { display: grid; gap: 18px; min-width: 0; }
+.section-lede { color: var(--ink-2); max-width: 65ch; }
+.eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: var(--accent); }
+.intro { display: grid; gap: 16px; }
+.lede { font-size: 18px; color: var(--ink-2); max-width: 62ch; }
+.chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 14px; font-weight: 600; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); }
+.chip.done { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+.callout { background: var(--accent-soft); border-radius: 12px; padding: 18px 20px; display: grid; gap: 8px; }
+.callout .label { font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 0.04em; }
+.callout p { font-size: 17px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 2px; align-content: start; }
+.tile .big { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.tile .small { font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+
+/* 서비스 흐름 */
+.flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1.2fr auto 1fr; gap: 8px; align-items: stretch; }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 4px; align-content: start; }
+.box b { font-size: 15px; }
+.box span { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.box.pair { display: grid; gap: 8px; padding: 8px; background: transparent; border-style: dashed; }
+.box.pair .box { padding: 10px; }
+.arrow { align-self: center; color: var(--muted); font-size: 20px; }
+@media (max-width: 760px) { .flow { grid-template-columns: 1fr; } .arrow { transform: rotate(90deg); justify-self: center; } }
+
+.table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; }
+td.num, th.num { text-align: right; white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 0; }
+tr.pick td { background: var(--accent-soft); }
+.ok { color: var(--accent); font-weight: 700; white-space: nowrap; }
+.note { font-size: 13.5px; color: var(--muted); }
+.tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.tag.keep { background: var(--accent-soft); color: var(--accent); }
+.tag.drop { background: var(--quote); color: var(--muted); }
+.task { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+.task-head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.task-head .final { font-size: 13px; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: 2px 10px; border-radius: 999px; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; }
+.checks li { display: grid; grid-template-columns: 3.2em minmax(0, 1fr); gap: 8px; font-size: 15px; align-items: baseline; }
+@media (max-width: 720px) { .checks { grid-template-columns: 1fr; } }
+.limits { display: grid; gap: 10px; }
+.limit { border-left: 4px solid var(--next); background: var(--surface); border-radius: 0 10px 10px 0; padding: 12px 16px; display: grid; gap: 4px; }
+.limit p { color: var(--ink-2); font-size: 15px; }
+footer { color: var(--muted); font-size: 13.5px; display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 20px; }
+</style>
+
+<div class="wrap">
+
+<header class="intro">
+  <p class="eyebrow">LLM 서비스 과제 · 개발팀 업무 · 9단계</p>
+  <h1>PACE 최종 평가 보고서</h1>
+  <p class="lede">버그 제보를 분류하고, 정보를 뽑고, 알려진 이슈와 연결해 우선순위를 매기는 <b>PACE 버그 제보 데스크</b>를 다 만들었어요. 이 보고서는 한 번도 안 본 <b>시험용 문제</b>로 매긴 최종 점수와, 거기까지 오면서 시험한 기법들의 기록이에요.</p>
+  <ul class="chips">
+    <li class="chip done">구간 0~9 완주</li>
+    <li class="chip done">목표 지표 모두 통과</li>
+    <li class="chip">2026-11-25</li>
+  </ul>
+</header>
+
+<section aria-labelledby="sum-title">
+  <h2 id="sum-title">한눈에 보기</h2>
+  <div class="callout">
+    <span class="label">결론</span>
+    <p>시험용 문제에서 <b>처음에 정한 목표를 모두 넘었어요.</b> 분류 98.1%, 글에 없는 값 지어내기 0%, 이슈 연결 96~97%, 우선순위 97.8~98.5%예요. 제보 1건은 약 8초, 정가로 0.0013달러에 처리돼요.</p>
+  </div>
+  <div class="tiles">
+    <div class="tile"><span class="big">98.1%</span><span class="small">분류 정확도<br>(시험용 160문제 × 3번)</span></div>
+    <div class="tile"><span class="big">0%</span><span class="small">추출에서 글에 없는 값을<br>지어낸 비율</span></div>
+    <div class="tile"><span class="big">96.3%</span><span class="small">같은 이슈를 찾은 비율<br>(새 문제 알아보기 96.4%)</span></div>
+    <div class="tile"><span class="big">98.5%</span><span class="small">우선순위가 정답과 같은 비율<br>(한 칸 안 100%)</span></div>
+    <div class="tile"><span class="big">약 8초</span><span class="small">제보 1건 처리 시간<br>비용 약 0.0013달러</span></div>
+  </div>
+</section>
+
+<section aria-labelledby="flow-title">
+  <h2 id="flow-title">완성된 서비스는 이렇게 일해요</h2>
+  <div class="flow" role="img" aria-label="제보 글 → 분류 → 추출과 연결·점수를 동시에 → 코드 계산 → 화면">
+    <div class="box"><b>제보 글</b><span>사용자가 보낸 글</span></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="box"><b>① 분류</b><span>버그·문의·개선 요청·판단 불가<br>이유도 함께 적어요</span></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="box pair">
+      <div class="box"><b>② 추출</b><span>플랫폼·기기·버전·재현 절차</span></div>
+      <div class="box"><b>③ 연결·점수</b><span>Haiku가 기록부 도구로 같은 이슈를 찾고 심각도를 매겨요</span></div>
+    </div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="box"><b>④ 코드 계산</b><span>우선순위, 정보 완성도, 더 물어볼 것, 안내 문구</span></div>
+  </div>
+  <p class="section-lede">② 추출과 ③ 연결은 서로 기다릴 필요가 없어서 동시에 불러요. 정보가 부족하면 사용자가 덧붙인 글을 처음 글과 합쳐 다시 분석해요. 이 기억 기능이 과제의 "Context 상태 관리"예요.</p>
+  <p class="note">웹 서비스 실행: 프로젝트 폴더에서 <code>.venv/bin/python -m uvicorn app:app --app-dir pace_desk/service --port 8010</code> 을 실행하고, 브라우저에서 <code>http://127.0.0.1:8010</code> 을 열어요.</p>
+</section>
+
+<section aria-labelledby="goal-title">
+  <h2 id="goal-title">목표 대비 최종 결과 (시험용 문제)</h2>
+  <p class="section-lede">시험용 문제는 프롬프트를 다듬는 동안 한 번도 보지 않았고, 모든 설정을 정한 뒤 <b>딱 한 번만</b> 풀었어요.</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>태스크</th><th>무엇을 재나</th><th class="num">목표</th><th class="num">결과</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>분류</td><td>정확도 (160문제 × 3번)</td><td class="num">95%</td><td class="num">98.1%</td><td class="ok">통과</td></tr>
+        <tr><td>분류</td><td>종류별 맞힌 비율 (버그·문의·개선 요청·판단 불가)</td><td class="num">모두 95%</td><td class="num">97.1 · 97.8 · 100 · 100</td><td class="ok">통과</td></tr>
+        <tr><td>분류</td><td>판단 불가를 알아본 비율</td><td class="num">90%</td><td class="num">100%</td><td class="ok">통과</td></tr>
+        <tr><td>분류</td><td>3번 물어도 같은 답</td><td class="num">95%</td><td class="num">97.5%</td><td class="ok">통과</td></tr>
+        <tr><td>추출</td><td>플랫폼 · 앱 버전</td><td class="num">95%</td><td class="num">100% · 100%</td><td class="ok">통과</td></tr>
+        <tr><td>추출</td><td>기기 · 재현 절차 있음/없음</td><td class="num">90%</td><td class="num">99.4% · 98.1%</td><td class="ok">통과</td></tr>
+        <tr><td>추출</td><td>글에 없는 값 지어내기</td><td class="num">1% 이하</td><td class="num">0% (290칸 중 0)</td><td class="ok">통과</td></tr>
+        <tr><td>연결·점수</td><td>같은 이슈를 찾은 비율 (1순위)</td><td class="num">90%</td><td class="num">96.3%</td><td class="ok">통과</td></tr>
+        <tr><td>연결·점수</td><td>새 문제를 알아본 비율</td><td class="num">85%</td><td class="num">96.4%</td><td class="ok">통과</td></tr>
+        <tr><td>연결·점수</td><td>우선순위 일치 · 한 칸 안</td><td class="num">85% · 98%</td><td class="num">98.5% · 100%</td><td class="ok">통과</td></tr>
+        <tr><td>전체</td><td>답 모양이 틀린 비율 (형식 오류)</td><td class="num">0%</td><td class="num">0건</td><td class="ok">통과</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">추출과 연결·점수는 정답 분류를 넣어 그 태스크만 따로 잰 점수예요. 세 태스크를 이어서 잰 점수는 아래 "처음부터 끝까지"에 있어요.</p>
+</section>
+
+<section aria-labelledby="history-title">
+  <h2 id="history-title">태스크별 개선 히스토리</h2>
+  <p class="section-lede">태스크마다 기본 프롬프트(0회차)로 시작해서, 회차마다 <b>한 가지만</b> 바꾸며 연습 문제로 비교했어요. 모든 회차는 결과표 CSV에 남아 있어요.</p>
+
+  <article class="task" aria-labelledby="t1">
+    <div class="task-head"><h3 id="t1">분류 (연습 문제 240개)</h3><span class="final">최종: 7회차</span></div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>회차</th><th>바꾼 것 (기법)</th><th class="num">정확도</th><th class="num">응답</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>기본 프롬프트 (Baseline)</td><td class="num">95.4%</td><td class="num">2.2초</td><td></td></tr>
+          <tr><td>1</td><td>답 모양 정하기 (Structured Outputs)</td><td class="num">92.9%</td><td class="num">1.1초</td><td><span class="tag keep">남김</span></td></tr>
+          <tr><td>2</td><td>제목·목록 정리 (Markdown 템플릿)</td><td class="num">92.1%</td><td class="num">1.1초</td><td><span class="tag keep">남김</span></td></tr>
+          <tr><td>3</td><td>헷갈릴 때 규칙 (Rubric · 답변 불가)</td><td class="num">96.2%</td><td class="num">1.1초</td><td><span class="tag keep">남김</span></td></tr>
+          <tr><td>4</td><td>PACE 기능 목록 (Context 선별)</td><td class="num">97.1%</td><td class="num">1.1초</td><td><span class="tag keep">남김</span></td></tr>
+          <tr><td>5</td><td>판단 불가 규칙 다듬기</td><td class="num">99.2%</td><td class="num">1.2초</td><td><span class="tag keep">남김</span></td></tr>
+          <tr><td>6</td><td>예시 3개 / 6개 (Few-shot)</td><td class="num">99.2%</td><td class="num">1.2초</td><td><span class="tag drop">뺌</span></td></tr>
+          <tr class="pick"><td>7</td><td>이유 먼저 쓰기 (CoT) · 3번 평균, 개선 요청 95.6%</td><td class="num">99.2%</td><td class="num">1.8초</td><td><span class="tag keep">최종</span></td></tr>
+          <tr><td>8</td><td>생각 깊이 보통 / 높게 (effort)</td><td class="num">99.2%</td><td class="num">1.2~1.3초</td><td><span class="tag drop">뺌</span></td></tr>
+          <tr><td>9</td><td>두 번에 나눠 묻기 (Prompt Chaining)</td><td class="num">98.8%</td><td class="num">2.8초</td><td><span class="tag drop">뺌</span></td></tr>
+          <tr><td>10</td><td>프롬프트 위치 바꾸기 (System·User 분리, Prefix cache 비교)</td><td class="num">98.3% / 99.2%</td><td class="num">비용 2.5배</td><td><span class="tag drop">뺌</span></td></tr>
+          <tr><td>11·12</td><td>진짜 리뷰에서 찾은 빈틈 규칙</td><td class="num">98.8% / 98.9%</td><td class="num">1.8초</td><td><span class="tag drop">뺌</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">자세한 설명은 4단계 기록 페이지에 있어요. 규칙과 정보를 넣은 회차에서 점수가 올랐고, 예시·생각 깊이·두 번 묻기는 이미 높은 점수를 더 올리지 못했어요.</p>
+  </article>
+
+  <article class="task" aria-labelledby="t2">
+    <div class="task-head"><h3 id="t2">추출 (연습 문제 240개)</h3><span class="final">최종: 2회차</span></div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>회차</th><th>바꾼 것 (기법)</th><th class="num">네 칸 모두 맞음</th><th class="num">지어낸 값</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>기본 프롬프트, JSON 모양 (Baseline · Structured Outputs)</td><td class="num">62.1%</td><td class="num">1.6%</td><td></td></tr>
+          <tr><td>1</td><td>기준표 추출 규칙 (Rubric · 없으면 비워 두기)</td><td class="num">98.3%</td><td class="num">0%</td><td><span class="tag keep">남김</span></td></tr>
+          <tr class="pick"><td>2</td><td>예시 3개 (Few-shot) · 3번 평균 98.1%, 같은 답 97.5%</td><td class="num">98.3%</td><td class="num">0%</td><td><span class="tag keep">최종</span></td></tr>
+          <tr><td>3</td><td>근거를 먼저 따오기 (CoT 비슷)</td><td class="num">96.7%</td><td class="num">0%</td><td><span class="tag drop">뺌</span></td></tr>
+          <tr><td>4</td><td>생각 깊이 보통 (effort)</td><td class="num">97.9%</td><td class="num">0%</td><td><span class="tag drop">뺌</span></td></tr>
+          <tr><td>5</td><td>분류와 추출을 한 번에 묻기 (Chaining 비교)</td><td class="num">96.2%</td><td class="num">0.2%</td><td><span class="tag drop">뺌</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">0회차에서 Haiku는 기기 이름을 영어로 바꾸고("픽셀 8" → "Pixel 8"), 문의에도 재현 절차를 적었어요. 기준표 규칙을 넣자 거의 다 고쳐졌어요. 예시 3개는 절차의 핵심 낱말을 글에서 그대로 따 쓰게 해 줬어요(78% → 88%). 분류와 한 번에 물으면 싸지만 서로의 실수를 옮겨서, 분류 다음에 추출을 부르는 방식(Chaining)을 골랐어요.</p>
+  </article>
+
+  <article class="task" aria-labelledby="t3">
+    <div class="task-head"><h3 id="t3">연결·점수 (판단 불가를 뺀 연습 문제 204개)</h3><span class="final">최종: 3회차</span></div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>회차</th><th>바꾼 것 (기법)</th><th class="num">이슈 연결</th><th class="num">심각도</th><th class="num">우선순위</th><th class="num">응답</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>이슈 37개 목록 통째로 (Baseline)</td><td class="num">97.1%</td><td class="num">86.7%</td><td class="num">95.1%</td><td class="num">2.1초</td></tr>
+          <tr><td>1</td><td>+ 연결·심각도 규칙 (Rubric)</td><td class="num">97.1%</td><td class="num">98.3%</td><td class="num">99.0%</td><td class="num">2.1초</td></tr>
+          <tr><td>2</td><td>코드가 검색한 후보 5개만 (Context 선별)</td><td class="num">98.0%</td><td class="num">100%</td><td class="num">99.5%</td><td class="num">2.2초</td></tr>
+          <tr class="pick"><td>3</td><td>Haiku가 도구로 직접 찾기 (Function calling)</td><td class="num">99.5%</td><td class="num">100%</td><td class="num">100%</td><td class="num">3.8초</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">3회차를 3번씩 풀게 해도 이슈 연결 98.9%, 같은 답 97.1%로 안정적이었어요. Haiku는 문제 하나에 도구를 평균 1.8번 불렀어요. 자기 말로 검색어를 바꿔 가며 찾고, 필요하면 이슈를 자세히 열어 "1.0.2에서 고쳤는데 1.2.0에서 또 생겼으니 재발"처럼 판단했어요. 우선순위는 Haiku가 고른 이슈·심각도에 기록부의 제보 수·상태·고친 버전을 더해 코드가 계산해요.</p>
+  </article>
+</section>
+
+<section aria-labelledby="e2e-title">
+  <h2 id="e2e-title">처음부터 끝까지 (실제 서비스 흐름, 시험용 160문제)</h2>
+  <p class="section-lede">웹 서비스와 똑같은 코드로, 분류부터 우선순위까지 모두 Haiku가 예측한 값으로 이어서 처리했어요. 앞 단계의 실수가 뒤로 이어지므로 실제 서비스의 실력이에요.</p>
+  <div class="tiles">
+    <div class="tile"><span class="big">96.9%</span><span class="small">분류 (1번 풀이)</span></div>
+    <div class="tile"><span class="big">100%</span><span class="small">플랫폼 · 앱 버전 추출</span></div>
+    <div class="tile"><span class="big">97.1%</span><span class="small">같은 이슈 연결</span></div>
+    <div class="tile"><span class="big">97.8%</span><span class="small">우선순위 일치<br>(한 칸 안 100%)</span></div>
+    <div class="tile"><span class="big">92.5%</span><span class="small">정보 완성도 (버그)</span></div>
+  </div>
+  <p class="note">한 번만 풀었을 때 문의의 분류는 93.5%(31문제 중 2개 틀림)였어요. 3번 평균(97.8%)보다 낮은데, 문제 수가 적어 1개가 3%씩 움직여서 그래요. 정보 완성도는 분류가 틀린 글에서 재현 절차 판단이 함께 틀려 조금 낮아요.</p>
+</section>
+
+<section aria-labelledby="real-title">
+  <h2 id="real-title">진짜 사용자 리뷰로 확인</h2>
+  <p class="section-lede">가민·화웨이·삼성헬스 앱의 실제 구글플레이 리뷰(영어·프랑스어)로 분류를 확인했어요. 다른 앱이라 PACE 기능 목록만 빼고 같은 프롬프트를 썼어요.</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th></th><th class="num">전체</th><th class="num">문제 보고</th><th class="num">기능 요청</th><th class="num">무관</th><th class="num">영어 · 프랑스어</th></tr></thead>
+      <tbody>
+        <tr><td>연습용 288개</td><td class="num">78.5%</td><td class="num">92.6%</td><td class="num">64.4%</td><td class="num">70.8%</td><td class="num">80% · 77%</td></tr>
+        <tr><td>시험용 192개</td><td class="num">83.3%</td><td class="num">94.4%</td><td class="num">63.3%</td><td class="num">87.5%</td><td class="num">83% · 84%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">버그(문제 보고) 찾기는 다른 앱·다른 언어에서도 94%였어요. "기능 요청"이 낮은 주된 이유는 정답 기준이 달라서예요. 예를 들어 "이 폰에서 작동 안 해요"를 우리 기준표는 버그로, 리뷰에 정답을 붙인 연구자들은 "지원해 달라"는 기능 요청으로 봤어요.</p>
+</section>
+
+<section aria-labelledby="cost-title">
+  <h2 id="cost-title">시간과 비용</h2>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>무엇</th><th class="num">값</th></tr></thead>
+      <tbody>
+        <tr><td>제보 1건 처리 시간 (Haiku 답 시간)</td><td class="num">중간값 5.9초 · 느린 쪽 8.0초</td></tr>
+        <tr><td>제보 1건 처리 시간 (실제 기다림, 헤드리스 준비 포함)</td><td class="num">중간값 8.1초 · 느린 쪽 10.3초</td></tr>
+        <tr><td>제보 1건 비용 (정가 환산)</td><td class="num">약 0.0013달러 (1,000건이면 약 1.3달러)</td></tr>
+        <tr><td>모든 실험에 새로 쓴 비용 (45번 실행, 정가 환산)</td><td class="num">약 3.6달러</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Claude는 Claude Code 헤드리스 모드로, Haiku 5.5만 불렀어요. 그래서 실제 요금은 따로 나가지 않고 Claude 요금제 사용량에서 빠져요. 정가 환산은 API로 불렀다면 들었을 돈이에요. 안 바뀌는 규칙을 시스템 프롬프트에 두어 입력의 약 76%를 캐시로 싸게 읽었어요.</p>
+</section>
+
+<section aria-labelledby="req-title">
+  <h2 id="req-title">과제 필수 조건 16개</h2>
+  <ul class="checks">
+    <li><span class="tag keep">완료</span><span>System·User 프롬프트 분리 (분류 0·10회차)</span></li>
+    <li><span class="tag keep">완료</span><span>주요 파라미터 설정 (effort 실험)</span></li>
+    <li><span class="tag keep">완료</span><span>Markdown 템플릿 (분류 2회차)</span></li>
+    <li><span class="tag keep">완료</span><span>Few-shot (분류 6회차, 추출 2회차)</span></li>
+    <li><span class="tag keep">완료</span><span>Decomposition·Prompt Chaining (분류 9회차, 추출 5회차, 서비스 흐름)</span></li>
+    <li><span class="tag keep">완료</span><span>CoT·Rubric (분류 7·3회차, 추출 3·1회차, 연결 1회차)</span></li>
+    <li><span class="tag keep">완료</span><span>정보 부족 시 답변 불가 (판단 불가, 빈칸, 더 물어볼 것)</span></li>
+    <li><span class="tag keep">완료</span><span>Structured Outputs, JSON Schema (모든 태스크)</span></li>
+    <li><span class="tag keep">완료</span><span>Function calling (연결 3회차, MCP 도구 서버)</span></li>
+    <li><span class="tag keep">완료</span><span>Context 선별·위치 배치·상태 관리 (기능 목록, 후보 5개, 덧붙인 글 기억)</span></li>
+    <li><span class="tag keep">완료</span><span>Prefix cache 고려 배치 (분류 10회차, 캐시 76%)</span></li>
+    <li><span class="tag keep">완료</span><span>여러 LLM 태스크 조합 (분류 → 추출·연결 → 코드 계산)</span></li>
+    <li><span class="tag keep">완료</span><span>입력·정답 평가셋과 지표 (시험지 400개, 이중 채점, 목표 점수)</span></li>
+    <li><span class="tag keep">완료</span><span>Python 자동 채점 + CSV (채점 코드 5개, 결과표)</span></li>
+    <li><span class="tag keep">완료</span><span>품질·응답시간·비용 비교 (모든 회차)</span></li>
+    <li><span class="tag keep">완료</span><span>Baseline 후 한 변수씩 개선 (태스크마다 0회차부터)</span></li>
+  </ul>
+</section>
+
+<section aria-labelledby="limit-title">
+  <h2 id="limit-title">남은 한계</h2>
+  <div class="limits">
+    <div class="limit"><h3>"아이폰 앱에서 ~가 안 돼요"</h3><p>PACE에는 아이폰 앱이 없어서 Haiku가 문의로 보거나 이슈를 못 찾는 일이 있어요. 실제로 겪은 고장이므로 버그로 보고 증상으로 연결해야 해요. 시험용에서 가장 자주 틀린 유형이에요.</p></div>
+    <div class="limit"><h3>사용자가 직접 한 행동의 결과</h3><p>"실수로 뒤로가기를 눌러 쓴 글이 날아갔어요"처럼 앱은 정상인데 결과만 아쉬운 글을 버그로 봐요. 기준표에서는 바라는 기능(임시저장)에 대한 개선 요청이에요.</p></div>
+    <div class="limit"><h3>정답지를 만든 쪽과 검토한 쪽이 같은 종류의 AI</h3><p>시험지 정답은 AI 도우미가 쓰고 다른 AI 도우미가 검토했어요. 둘이 같은 실수를 할 수 있으니, 실제로 쓰기 전에 사람이 일부를 다시 확인하는 게 좋아요.</p></div>
+    <div class="limit"><h3>문의·개선 요청의 정보 완성도</h3><p>버그는 코드가 정보 완성도를 계산하지만, 문의·개선 요청의 완성도(내용이 분명한가)는 서비스에서 따로 매기지 않아요.</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="file-title">
+  <h2 id="file-title">파일 위치 (프로젝트 폴더 안)</h2>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>무엇</th><th>어디</th></tr></thead>
+      <tbody>
+        <tr><td>목표 대비 최종 결과 (엑셀로 열림)</td><td><code>pace_desk/eval/results/final/final_test_results.csv</code></td></tr>
+        <tr><td>세 태스크의 개선 히스토리 (엑셀로 열림)</td><td><code>pace_desk/eval/results/final/improvement_history.csv</code></td></tr>
+        <tr><td>회차별 결과표</td><td><code>pace_desk/eval/results/cls·ext·link·real/history.csv</code></td></tr>
+        <tr><td>최종 프롬프트</td><td><code>pace_desk/prompts/cls_c7.md</code>, <code>ext_e2.md</code>, <code>link_s3.md</code></td></tr>
+        <tr><td>웹 서비스</td><td><code>pace_desk/service/app.py</code>, <code>pipeline.py</code></td></tr>
+        <tr><td>기록부 도구 · 도구 서버</td><td><code>pace_desk/tools.py</code>, <code>pace_desk/mcp_server.py</code></td></tr>
+        <tr><td>Haiku를 부르는 코드</td><td><code>pace_desk/llm.py</code></td></tr>
+        <tr><td>채점 코드</td><td><code>pace_desk/eval/eval_cls.py</code>, <code>eval_ext.py</code>, <code>eval_link.py</code>, <code>eval_real.py</code>, <code>eval_pipeline.py</code></td></tr>
+        <tr><td>시험지 · 기준표 · 정답 확인 보고서</td><td><code>pace_desk/eval/pace_eval.csv</code>, <code>labeling_guide.md</code>, <code>qa/qa_report.md</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <p>숫자는 2026-11-25 기준이에요. 시험용 문제(PACE 160개, 진짜 리뷰 192개)는 모든 설정을 정한 뒤 한 번만 풀었어요.</p>
+  <p>진짜 리뷰 출처: Wei et al., ICTAI 2023 · Zenodo 11066414 · MIT 라이선스</p>
+</footer>
+
+</div>
