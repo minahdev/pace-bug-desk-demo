@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PACE 버그 제보 데스크</title>
+<meta name="description" content="건강 앱 PACE의 버그 제보를 Claude Haiku 5.5로 분류하고, 알려진 이슈와 연결해 우선순위를 매기는 서비스의 데모">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap">
+<style>
+:root { --bg:#f2f5f3; --surface:#fcfcfb; --ink:#14201a; --ink2:#46524b; --muted:#66716a; --line:#d6ddd8;
+  --accent:#16774a; --accent-soft:#dfefe6; --warn:#9c5304; --warn-soft:#faead5; --quote:#e9efeb;
+  --p4:#104281; --p3:#256abf; --p2:#5598e7; --p1:#86b6ef; }
+@media (prefers-color-scheme: dark) { :root { --bg:#111513; --surface:#1a1a19; --ink:#e9efeb; --ink2:#b5bfb8;
+  --muted:#919b94; --line:#2d3430; --accent:#4fc08b; --accent-soft:#17301f; --warn:#f0a44c; --warn-soft:#392912;
+  --quote:#212723; --p4:#b7d3f6; --p3:#6da7ec; --p2:#2a78d6; --p1:#184f95; color-scheme: dark; } }
+body { margin:0; background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:16px; line-height:1.65; word-break:keep-all; overflow-wrap:break-word; }
+.wrap { max-width:820px; margin:0 auto; padding:32px 16px 64px; display:grid; gap:20px; }
+h1 { margin:0; font-size:30px; } h2 { margin:0; font-size:18px; }
+.lede { color:var(--ink2); margin:4px 0 0; }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px; display:grid; gap:12px; min-width:0; }
+.card p { margin:0; }
+.notice { background:var(--accent-soft); border-color:transparent; }
+a { color:var(--accent); }
+button { font:inherit; border:0; border-radius:8px; cursor:pointer; }
+:focus-visible { outline:3px solid var(--p3); outline-offset:2px; }
+.row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.exlist { display:flex; flex-wrap:wrap; gap:8px; }
+.exlist button { background:var(--quote); color:var(--ink2); font-weight:600; font-size:14px; padding:8px 12px; }
+.exlist button[aria-pressed="true"] { background:var(--accent); color:#fff; }
+.report { margin:0; padding:12px 14px; background:var(--bg); border:1px solid var(--line); border-radius:8px; }
+.chip { display:inline-block; padding:2px 12px; border-radius:999px; font-weight:700; background:var(--accent-soft); color:var(--accent); }
+.pri { display:inline-flex; gap:8px; align-items:center; font-weight:700; font-size:20px; }
+.pri i { width:14px; height:14px; border-radius:3px; display:inline-block; }
+.sum { display:flex; flex-wrap:wrap; gap:6px; align-items:center; color:var(--ink2); }
+.sum span.t { background:var(--quote); padding:2px 10px; border-radius:6px; }
+table { border-collapse:collapse; width:100%; }
+td, th { text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { color:var(--muted); font-weight:600; width:8em; }
+.tw { overflow-x:auto; }
+.res th { width:auto; }
+.muted { color:var(--muted); font-size:14px; }
+.issue { border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
+ul, ol { margin:0; padding-left:1.3em; }
+li { margin:2px 0; }
+footer { text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>PACE 버그 제보 데스크</h1>
+    <p class="lede">건강 앱 PACE에 들어온 버그 제보를 Claude Haiku 5.5가 읽고 분류해서, 이미 알려진 이슈와 연결하고 얼마나 급한지 알려 주는 서비스예요.</p>
+  </header>
+
+  <section class="card notice">
+    <p><b>이 사이트는 데모예요.</b> 진짜 서비스가 예시 제보 8개를 분석한 결과를 그대로 보여 줘요. 새 글을 직접 넣어 분석하려면 <a href="https://github.com/minahdev/pace-bug-desk-demo">GitHub의 코드</a>를 받아 내 컴퓨터에서 실행하면 돼요.</p>
+  </section>
+
+  <section class="card">
+    <h2>예시 제보 고르기</h2>
+    <div class="exlist" id="exlist" role="group" aria-label="예시 제보"></div>
+    <p class="report" id="report"></p>
+    <p class="muted" id="check"></p>
+  </section>
+
+  <div id="result" class="wrap" style="padding:0"></div>
+
+  <section class="card">
+    <h2>어떻게 동작하나요</h2>
+    <ol>
+      <li><b>분류</b> (Haiku): 버그 · 문의 · 개선 요청 · 판단 불가 중 하나를 고르고 이유를 써요.</li>
+      <li><b>정보 뽑기</b> (Haiku): 플랫폼, 기기, 앱 버전, 재현 절차를 글에 있는 것만 뽑아요.</li>
+      <li><b>이슈 연결</b> (Haiku + 도구): 기록부를 검색해서 같은 문제를 찾고 심각도를 매겨요.</li>
+      <li><b>점수 계산</b> (코드): 우선순위 = 심각도 + 영향 범위 + 해결 상태. 빈칸은 사용자에게 물어볼 질문이 돼요.</li>
+    </ol>
+    <p class="muted">2와 3은 1의 결과를 받아 동시에 처리해요. 글의 뜻을 판단하는 일은 Haiku가, 같은 입력에 늘 같은 점수가 나와야 하는 계산은 코드가 맡아요.</p>
+  </section>
+
+  <section class="card">
+    <h2>시험 결과</h2>
+    <p class="muted">정답이 달린 시험지 400문제 중, 한 번도 보지 않은 시험용 문제로 마지막에 한 번만 채점했어요.</p>
+    <div class="tw"><table class="res">
+      <tr><th>무엇을</th><th>목표</th><th>결과</th></tr>
+      <tr><td>분류 정확도 (3번 평균)</td><td>95% 이상</td><td><b>98.1%</b></td></tr>
+      <tr><td>플랫폼 · 앱 버전 뽑기</td><td>95% 이상</td><td><b>100% · 100%</b></td></tr>
+      <tr><td>글에 없는 값 지어내기</td><td>1% 이하</td><td><b>0%</b></td></tr>
+      <tr><td>이슈 연결 (첫 번째로 고른 이슈가 정답)</td><td>90% 이상</td><td><b>96.3%</b></td></tr>
+      <tr><td>우선순위 일치</td><td>85% 이상</td><td><b>98.5%</b></td></tr>
+    </table></div>
+    <p class="muted">제보 1건에 약 8초, 약 0.0013달러(API 정가 환산). 회차별 개선 기록은 GitHub 저장소에 있어요.</p>
+  </section>
+
+  <footer class="muted">LLM 서비스 수업 과제 · <a href="https://github.com/minahdev/pace-bug-desk-demo">코드와 평가 기록 (GitHub)</a></footer>
+</div>
+<script>
+const DATA = [{"id": "pe-097", "label": "고친 문제가 또 생김 (재발)", "report": "1.2.0 쓰는데 걸음수가 삼성헬스보다 하루에 천보씩은 적게 나와요. 남편 폰도 그렇대요. 둘 다 갤럭시 S23이에요", "gold": {"category": "버그", "link": "PACE-107", "priority": "긴급"}, "result": {"category": "버그", "reason": "글쓴이가 PACE 1.2.0에서 걸음 수가 삼성헬스보다 하루 약 1,000보 적게 나온다고 실제 오동작을 알렸고, 걸음 수는 PACE 홈 기능에 있습니다. 남편 기기도 같은 현상이라 기기 한정 설정 문제가 아닌 앱 쪽 오류로 보입니다.", "extract": {"platform": "Android 앱", "env_detail": "갤럭시 S23", "app_version": "1.2.0", "steps": null, "steps_keywords": []}, "linked_issues": [{"id": "PACE-107", "title": "걸음 수가 삼성헬스와 다르고 걸어도 바로 안 올라감", "status": "해결됨", "fixed_in": ["앱 1.0.2"], "report_count": 23}], "scores": {"severity": 1, "others_affected": true, "impact": 2, "resolution": 2, "priority": 5, "priority_label": "긴급"}, "completeness": 1, "missing": ["어떻게 하면 다시 볼 수 있는지, 누른 순서대로 알려 주세요."], "guidance": "예전에 고친 문제가 다시 생겼어요(재발). 개발팀에 급히 전달할게요.", "cost_usd": 0.001437, "calls": [{"step": "분류", "latency_ms": 1986, "tools": []}, {"step": "추출", "latency_ms": 2215, "tools": []}, {"step": "연결·점수", "latency_ms": 4709, "tools": ["search_known_issues", "get_issue"]}]}}, {"id": "pe-001", "label": "같은 문제, 옛 버전", "report": "걸음 수가 삼성헬스보다 계속 적게 나와요. 갤럭시 S21이고 앱 버전은 1.0.1이에요. 아침에 출근하면서 3천보 넘게 걸었는데 PACE 홈에는 800보밖에 안 찍혀 있어요.", "gold": {"category": "버그", "link": "PACE-107", "priority": "보통"}, "result": {"category": "버그", "reason": "걸음 수 기능은 PACE 홈에 있고, 글쓴이는 3천 보 이상 걸었는데 800보만 표시된다고 실제 오동작을 알렸습니다. 따라서 버그입니다.", "extract": {"platform": "Android 앱", "env_detail": "갤럭시 S21", "app_version": "1.0.1", "steps": "아침에 출근하면서 걷기 → PACE 홈에서 걸음 수 확인", "steps_keywords": ["출근하면서", "PACE 홈"]}, "linked_issues": [{"id": "PACE-107", "title": "걸음 수가 삼성헬스와 다르고 걸어도 바로 안 올라감", "status": "해결됨", "fixed_in": ["앱 1.0.2"], "report_count": 23}], "scores": {"severity": 1, "others_affected": false, "impact": 2, "resolution": 0, "priority": 3, "priority_label": "보통"}, "completeness": 2, "missing": [], "guidance": "이미 해결된 내용이에요. 앱을 1.0.2 이상으로 업데이트해 주세요.", "cost_usd": 0.002791, "calls": [{"step": "분류", "latency_ms": 1545, "tools": []}, {"step": "추출", "latency_ms": 2874, "tools": []}, {"step": "연결·점수", "latency_ms": 3271, "tools": ["search_known_issues"]}]}}, {"id": "pe-188", "label": "기록부에 없는 새 문제", "report": "웹에서 로그인만 하면 다시 로그인 화면으로 돌아와요ㅠㅠ 이메일 비번 맞게 넣고 들어가면 홈이 잠깐 보이다가 바로 로그인 페이지로 튕김. 크롬 시크릿창에서도 똑같고 오늘 아침부터 아예 못 쓰고 있어요. 남편 계정도 똑같대요", "gold": {"category": "버그", "link": null, "priority": "긴급"}, "result": {"category": "버그", "reason": "웹에서 올바른 이메일과 비밀번호로 로그인하면 홈이 잠깐 보였다가 로그인 화면으로 되돌아간다고 실제 겪은 오동작을 알리고 있으며, 시크릿창에서도 재현되고 남편 계정도 같은 증상이라 설정 문제가 아닌 로그인 기능의 고장으로 보입니다.", "extract": {"platform": "웹", "env_detail": "크롬", "app_version": null, "steps": "로그인 → 홈이 잠깐 보인 뒤 로그인 화면으로 튕김", "steps_keywords": ["로그인만 하면", "홈이 잠깐 보이다가", "로그인 페이지로 튕김"]}, "linked_issues": [], "scores": {"severity": 2, "others_affected": true, "impact": 1, "resolution": 2, "priority": 5, "priority_label": "긴급"}, "completeness": 2, "missing": [], "guidance": "기록부에 없는 새 문제예요. 개발팀에 새 이슈로 전달할게요.", "cost_usd": 0.001504, "calls": [{"step": "분류", "latency_ms": 1585, "tools": []}, {"step": "추출", "latency_ms": 2772, "tools": []}, {"step": "연결·점수", "latency_ms": 3636, "tools": ["search_known_issues", "search_known_issues"]}]}}, {"id": "pe-107", "label": "보안 문제", "report": "로그인 창에 아무 이메일이나 넣고 비번 틀리게 쳐 보면요, 가입 안 된 건 '존재하지 않는 계정'이라고 뜨고 가입된 건 '비밀번호가 틀렸습니다'라고 떠요. 이러면 남의 이메일이 PACE에 가입돼 있는지 다 알 수 있는 거 아닌가요? 사이트에서 해봤어요", "gold": {"category": "버그", "link": "PACE-102", "priority": "높음"}, "result": {"category": "버그", "reason": "글쓴이가 실제로 사이트 로그인 창에서 시도해 보고, 가입 여부에 따라 오류 문구가 달라지는 동작을 확인했다고 밝혔습니다. 로그인 기능이라는 PACE 화면에서 실제 오동작이 확인되었으므로 규칙 1에 따라 버그입니다.", "extract": {"platform": "웹", "env_detail": null, "app_version": null, "steps": "로그인 창 → 이메일 입력 후 틀린 비번으로 로그인", "steps_keywords": ["로그인 창", "비번 틀리게 쳐"]}, "linked_issues": [{"id": "PACE-102", "title": "로그인 실패 메시지와 응답 시간으로 계정 존재 여부가 드러남", "status": "해결됨", "fixed_in": ["서버 2026.08.26"], "report_count": 1}], "scores": {"severity": 2, "others_affected": false, "impact": 0, "resolution": 2, "priority": 4, "priority_label": "높음"}, "completeness": 2, "missing": [], "guidance": "예전에 고친 문제가 다시 생겼어요(재발). 개발팀에 급히 전달할게요.", "cost_usd": 0.00148, "calls": [{"step": "분류", "latency_ms": 2042, "tools": []}, {"step": "추출", "latency_ms": 2475, "tools": []}, {"step": "연결·점수", "latency_ms": 4832, "tools": ["search_known_issues", "get_issue"]}]}}, {"id": "pe-033", "label": "‘버그 신고’지만 없는 기능", "report": "버그 신고합니다. 만보 채워도 아무 알림이 안 와요. 목표 달성하면 띵동 하고 알려주는 기능 있으면 좋겠어요", "gold": {"category": "개선 요청", "link": "PACE-208", "priority": "보통"}, "result": {"category": "개선 요청", "reason": "걸음 목표 달성 알림은 PACE에 없는 기능으로, 글쓴이가 실제로 겪은 고장이 아니라 없는 알림이 안 온다는 내용입니다. 목표 달성 시 알려주는 기능을 원한다고 했으므로 없는 기능을 요청하는 개선 요청입니다.", "extract": {"platform": null, "env_detail": null, "app_version": null, "steps": null, "steps_keywords": []}, "linked_issues": [{"id": "PACE-208", "title": "걸음 목표 달성 알림", "status": "계획됨", "fixed_in": [], "report_count": 4}], "scores": {"severity": 0, "others_affected": false, "impact": 1, "resolution": 1, "priority": 2, "priority_label": "보통"}, "completeness": null, "missing": [], "guidance": "이미 알고 있는 내용이에요. 지금 '계획됨' 상태예요 (앱 1.3.0에 반영 예정).", "cost_usd": 0.001383, "calls": [{"step": "분류", "latency_ms": 2967, "tools": []}, {"step": "추출", "latency_ms": 1926, "tools": []}, {"step": "연결·점수", "latency_ms": 3436, "tools": ["search_known_issues", "search_known_issues"]}]}}, {"id": "pe-005", "label": "문의", "report": "안정시 심박이요, 삼성헬스에 나오는 숫자랑 다를 수도 있나요? 둘 중에 뭘 기준으로 봐야 하는지 궁금해서요", "gold": {"category": "문의", "link": "PACE-122", "priority": "낮음"}, "result": {"category": "문의", "reason": "글쓴이는 실제 고장을 겪었다고 하지 않고, PACE의 안정시 심박 숫자가 삼성헬스와 다를 수 있는지, 어느 쪽을 기준으로 봐야 하는지 묻고 있습니다. 안정시 심박은 PACE 홈에 있는 기능이고, 휴대폰의 Health Connect에서 값을 읽어 오므로 겪은 실패 없이 묻기만 한 문의입니다.", "extract": {"platform": null, "env_detail": null, "app_version": null, "steps": null, "steps_keywords": []}, "linked_issues": [{"id": "PACE-122", "title": "안정시 심박이 삼성헬스와 다름", "status": "제한 사항", "fixed_in": [], "report_count": 3}], "scores": {"severity": 0, "others_affected": false, "impact": 1, "resolution": 0, "priority": 1, "priority_label": "낮음"}, "completeness": null, "missing": [], "guidance": "고장이 아니라 지금 설계상 안 되는 부분이에요. 삼성헬스 값과 조금 다를 수 있다고 안내해 주세요.", "cost_usd": 0.001341, "calls": [{"step": "분류", "latency_ms": 2295, "tools": []}, {"step": "추출", "latency_ms": 1704, "tools": []}, {"step": "연결·점수", "latency_ms": 4416, "tools": ["search_known_issues", "get_issue"]}]}}, {"id": "pe-166", "label": "정보가 부족한 제보", "report": "마이페이지 열면 초록색 박스 하나만 있고 그 밑은 그냥 흰화면임.. 로그아웃 버튼도 안보여요", "gold": {"category": "버그", "link": "PACE-105", "priority": "보통"}, "result": {"category": "버그", "reason": "마이페이지를 열었을 때 초록 박스 하나만 보이고 나머지는 흰 화면으로 나오며 로그아웃 버튼도 안 보인다고 실제 겪은 화면 오동작을 알리고 있습니다. 마이페이지는 PACE에 있는 화면이므로 버그입니다.", "extract": {"platform": null, "env_detail": null, "app_version": null, "steps": "마이페이지 열기 → 초록색 박스 하나만 보이고 그 아래는 흰 화면", "steps_keywords": ["마이페이지 열면", "초록색 박스", "흰화면"]}, "linked_issues": [{"id": "PACE-105", "title": "마이 페이지 초록 카드 아래가 통째로 안 보임", "status": "해결됨", "fixed_in": ["앱 1.0.1"], "report_count": 12}], "scores": {"severity": 1, "others_affected": false, "impact": 2, "resolution": 0, "priority": 3, "priority_label": "보통"}, "completeness": 1, "missing": ["앱과 웹 중 어디에서 겪으셨나요?", "앱 버전을 알려 주세요. 플레이스토어의 PACE 페이지에서 볼 수 있어요."], "guidance": "이미 고친 문제예요. 앱을 최신 버전으로 업데이트해 보시고, 그래도 생기면 앱 버전을 알려 주세요.", "cost_usd": 0.001467, "calls": [{"step": "분류", "latency_ms": 1905, "tools": []}, {"step": "추출", "latency_ms": 2621, "tools": []}, {"step": "연결·점수", "latency_ms": 4269, "tools": ["search_known_issues", "search_known_issues"]}]}}, {"id": "pe-007", "label": "무엇인지 알 수 없는 글", "report": "그거 아직도 안 고쳐졌네요", "gold": {"category": "판단 불가", "link": null, "priority": null}, "result": {"category": "판단 불가", "reason": "\"그거\"가 무엇을 가리키는지 글에 없고, 겪은 증상이나 대상 기능도 나와 있지 않아 글만으로는 판단할 수 없습니다.", "extract": {"platform": null, "env_detail": null, "app_version": null, "steps": null, "steps_keywords": []}, "linked_issues": [], "scores": null, "completeness": null, "missing": ["어떤 기능이나 화면에서, 무슨 일이 있었는지 조금만 더 알려 주세요."], "guidance": "", "cost_usd": 0.000522, "calls": [{"step": "분류", "latency_ms": 1804, "tools": []}, {"step": "추출", "latency_ms": 1359, "tools": []}]}}];
+const $ = (s) => document.querySelector(s);
+const LEVEL = { "긴급": "var(--p4)", "높음": "var(--p3)", "보통": "var(--p2)", "낮음": "var(--p1)" };
+const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+const list = $("#exlist");
+DATA.forEach((ex, i) => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.textContent = ex.label;
+  b.setAttribute("aria-pressed", "false");
+  b.addEventListener("click", () => { history.replaceState(null, "", "#ex" + (i + 1)); show(i); });
+  list.appendChild(b);
+});
+
+function show(i) {
+  const ex = DATA[i];
+  list.querySelectorAll("button").forEach((b, j) => b.setAttribute("aria-pressed", String(i === j)));
+  $("#report").textContent = "“" + ex.report + "”";
+  const r = ex.result, g = ex.gold;
+  const first = r.linked_issues.length ? r.linked_issues[0].id : null;
+  const marks = [`분류 ${r.category} ${r.category === g.category ? "✓" : "✗"}`];
+  if (g.category !== "판단 불가") {
+    marks.push(`연결 ${first || "새 문제"} ${first === g.link ? "✓" : "✗"}`);
+    marks.push(`우선순위 ${r.scores ? r.scores.priority_label : "없음"} ${r.scores && r.scores.priority_label === g.priority ? "✓" : "✗"}`);
+  }
+  $("#check").textContent = "시험지 정답과 비교: " + marks.join(" · ");
+  render(r);
+}
+
+function render(r) {
+  const e = r.extract, s = r.scores;
+  const pri = s ? `<div class="pri"><i style="background:${LEVEL[s.priority_label]}"></i>${esc(s.priority_label)} <span class="muted">(${s.priority}점)</span></div>
+      <div class="sum"><span class="t">심각도 ${s.severity}</span>+<span class="t">영향 범위 ${s.impact}</span>+<span class="t">해결 상태 ${s.resolution}</span>=<b>${s.priority}</b></div>
+      <p class="muted">심각도는 Haiku가 매기고, 영향 범위(제보한 사람 수)와 해결 상태(새 문제·고치는 중·이미 고침·재발)는 기록부를 보고 코드가 계산해요.</p>`
+    : `<p class="muted">무엇에 대한 글인지 알 수 없어서 점수를 매기지 않았어요.</p>`;
+  const issues = r.linked_issues.length ? r.linked_issues.map((i) => `<div class="issue"><b>${esc(i.id)}</b> ${esc(i.title)}
+      <div class="muted">상태: ${esc(i.status)}${i.fixed_in.length ? " · 고친 버전: " + esc(i.fixed_in.join(", ")) : ""} · 지금까지 ${esc(i.report_count)}명 제보</div></div>`).join("")
+    : `<p class="muted">같은 이슈가 기록부에 없어요.</p>`;
+  const missing = r.missing.length ? `<section class="card"><h2>더 필요한 정보</h2><ul>${r.missing.map((m) => `<li>${esc(m)}</li>`).join("")}</ul>
+      <p class="muted">실제 서비스에서는 사용자가 답을 덧붙이면 처음 글과 합쳐서 다시 분석해요.</p></section>` : "";
+  const calls = r.calls.map((c) => `${esc(c.step)} ${(c.latency_ms / 1000).toFixed(1)}초${c.tools.length ? " (도구: " + c.tools.map(esc).join(", ") + ")" : ""}`).join(" · ");
+  $("#result").innerHTML = `
+    <section class="card"><h2>분류</h2><div class="row"><span class="chip">${esc(r.category)}</span></div><p>${esc(r.reason)}</p></section>
+    <section class="card"><h2>우선순위</h2>${pri}</section>
+    <section class="card"><h2>연결된 이슈</h2>${issues}${r.guidance ? `<p><b>안내:</b> ${esc(r.guidance)}</p>` : ""}</section>
+    <section class="card"><h2>뽑은 정보</h2><div class="tw"><table>
+      <tr><th>플랫폼</th><td>${esc(e.platform ?? "모름")}</td></tr>
+      <tr><th>기기</th><td>${esc(e.env_detail ?? "없음")}</td></tr>
+      <tr><th>앱 버전</th><td>${esc(e.app_version ?? "없음")}</td></tr>
+      <tr><th>재현 절차</th><td>${esc(e.steps ?? "없음")}</td></tr>
+      ${r.completeness !== null ? `<tr><th>정보 완성도</th><td>${r.completeness} / 2</td></tr>` : ""}
+    </table></div></section>
+    ${missing}
+    <p class="muted">Haiku 응답 시간: ${calls} · 비용(정가 환산) 약 ${Number(r.cost_usd).toFixed(4)}달러</p>`;
+}
+
+const m = /^#ex(\d+)$/.exec(location.hash);
+const start = m ? Math.min(Math.max(+m[1] - 1, 0), DATA.length - 1) : 0;
+show(start);
+</script>
+</body>
+</html>
